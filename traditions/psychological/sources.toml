@@ -1,0 +1,27 @@
+# Further reading behind this pack's framing. Nothing is quoted; meanings.md is original writing.
+
+[[source]]
+id = "arroyo-elements"
+title = "Astrology, Psychology and the Four Elements"
+author = "Stephen Arroyo"
+year = 1975
+covers = "elements and modes as psychological functions; planets as drives"
+
+[[source]]
+id = "greene-saturn"
+title = "Saturn: A New Look at an Old Devil"
+author = "Liz Greene"
+year = 1976
+covers = "psychological reading of Saturn; growth through difficulty"
+
+[[source]]
+id = "hand-planets"
+title = "Planets in Transit / Horoscope Symbols"
+author = "Robert Hand"
+covers = "symbolism of planets, signs, houses and aspects"
+
+[[source]]
+id = "orbs-modern"
+title = "Common modern orb conventions (majors 5–8°, minors 1–3°)"
+author = "general practice"
+covers = "fixed orbs in method.toml — adjust to your own practice"

@@ -1,0 +1,4 @@
+name,date,time,tz,lat,lon,place,rating,tags
+Ada One,1879-03-14,11:30,LMT,48.4,10.0,,AA,physics;test
+Bea Two,1990-07-01,12:00:15,UTC,52.5,13.4,,A,
+Cy Three,2000-01-01,00:00,,,,"Paris, France",B,music

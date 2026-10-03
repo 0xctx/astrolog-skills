@@ -1,0 +1,317 @@
+# Hellenistic tradition — a sample pack of the tradition's common doctrine (rules, tables and formulas), written for
+# this toolkit, with no page citations. Choices where the tradition disagrees are listed in REVIEW.md. To build a pack
+# cited page by page from books or courses you own: `astro sources add hellenistic <file>`, then the packs skill.
+label = "Hellenistic"
+cited = false
+
+[chart]
+# how the sky is measured in this tradition: used whenever the pack is, over the user's profile (adjust with
+# `astro packs settings hellenistic`). Mean node: a choice (REVIEW.md).
+zodiac = "tropical"
+houses = "whole-sign"
+node = "mean"
+objects = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "north_node", "south_node"]
+
+# The five configurations: copresence, sextile, square, trine, opposition.
+[aspects]
+set = ["conjunction", "sextile", "square", "trine", "opposition"]
+
+# The tradition has no orbs in the modern sense; the closest notion is the three-degree range of an applying
+# aspect. Aspect lists and charts use it; the doctrine below works by whole sign and by its own ranges.
+[orbs]
+rule = "fixed"
+conjunction = 3
+sextile = 3
+square = 3
+trine = 3
+opposition = 3
+
+[midpoints]
+aspects = []   # not a Hellenistic technique
+
+[sect]
+day_rule = "sun_above_horizon"              # Sun above the exact Ascendant-Descendant degrees
+diurnal = ["sun", "jupiter", "saturn"]
+nocturnal = ["moon", "venus", "mars"]
+mercury = "morning_evening"                 # other rules in REVIEW.md
+mercury_role = "association"                # Mercury takes the role of what it is closely joined to
+association_orb = 3                         # close = the degree range of the closest configurations
+benefics = ["jupiter", "venus"]
+malefics = ["saturn", "mars"]
+
+[sect.rejoicing]
+by_hemisphere = true
+by_sign = "gender"                          # the most common of three variants
+
+[dignities]
+domicile = { aries = "mars", taurus = "venus", gemini = "mercury", cancer = "moon", leo = "sun", virgo = "mercury", libra = "venus", scorpio = "mars", sagittarius = "jupiter", capricorn = "saturn", aquarius = "saturn", pisces = "jupiter" }
+exaltation = { sun = ["aries", 19], moon = ["taurus", 3], mercury = ["virgo", 15], venus = ["pisces", 27], mars = ["capricorn", 28], jupiter = ["cancer", 15], saturn = ["libra", 21] }
+# Day ruler, night ruler, cooperating ruler.
+triplicity = { fire = ["sun", "jupiter", "saturn"], earth = ["venus", "moon", "mars"], air = ["saturn", "mercury", "jupiter"], water = ["venus", "mars", "moon"] }
+bounds_scheme = "egyptian"
+proper_face = true                          # the same sign relation to the Sun or Moon as in the domiciles
+twelfth_parts = { multiplier = 12 }         # 2.5-degree pieces from the same sign
+
+[dignities.decans]
+scheme = "chaldean"                         # descending planetary order, Mars first in Aries
+
+# The Egyptian bounds; each end degree is where the next bound begins.
+[dignities.bounds.egyptian]
+aries = [["jupiter", 6], ["venus", 12], ["mercury", 20], ["mars", 25], ["saturn", 30]]
+taurus = [["venus", 8], ["mercury", 14], ["jupiter", 22], ["saturn", 27], ["mars", 30]]
+gemini = [["mercury", 6], ["jupiter", 12], ["venus", 17], ["mars", 24], ["saturn", 30]]
+cancer = [["mars", 7], ["venus", 13], ["mercury", 19], ["jupiter", 26], ["saturn", 30]]
+leo = [["jupiter", 6], ["venus", 11], ["saturn", 18], ["mercury", 24], ["mars", 30]]
+virgo = [["mercury", 7], ["venus", 17], ["jupiter", 21], ["mars", 28], ["saturn", 30]]
+libra = [["saturn", 6], ["mercury", 14], ["jupiter", 21], ["venus", 28], ["mars", 30]]
+scorpio = [["mars", 7], ["venus", 11], ["mercury", 19], ["jupiter", 24], ["saturn", 30]]
+sagittarius = [["jupiter", 12], ["venus", 17], ["mercury", 21], ["saturn", 26], ["mars", 30]]
+capricorn = [["mercury", 7], ["jupiter", 14], ["venus", 22], ["saturn", 26], ["mars", 30]]
+aquarius = [["mercury", 7], ["venus", 13], ["jupiter", 20], ["mars", 25], ["saturn", 30]]
+pisces = [["venus", 12], ["jupiter", 16], ["mercury", 19], ["mars", 28], ["saturn", 30]]
+
+[phase]
+under_beams = 15
+weak_within = 9                             # especially within 9 degrees
+heart = 1                                   # a minority view; REVIEW.md
+heliacal_days = 7
+visible_beyond = 15
+chariot = ["domicile", "exaltation", "bounds"]
+
+[places]
+good = [1, 3, 4, 5, 7, 9, 10, 11]           # configured to the rising sign
+bad = [2, 6, 8, 12]                         # in aversion to it
+busy = [1, 2, 4, 5, 7, 8, 10, 11]           # angles and succedents, the first approach; REVIEW
+joys = { mercury = 1, moon = 3, venus = 5, mars = 6, sun = 9, jupiter = 11, saturn = 12 }
+angle_degrees = true                        # the Midheaven and IC degrees add the 10th's and 4th's topics to their places
+busy_by_angle = { aspects = ["trine"], orb = 3 }   # a declining planet trine the exact Ascendant or MC degree is busy
+quadrant = "porphyry"                       # quadrant houses, shown for information only (REVIEW.md)
+
+# Assembly (an applying conjunction beyond 3° but within 15°) and the Moon running in the void (no exact aspect
+# completed within the next 30° of its motion — an unfavourable sign).
+[configurations]
+assembly = 15
+void_range = 30
+
+# Seven ways a malefic maltreats and a benefic bonifies; sect sets how far each goes.
+[conditions.overcoming]
+kind = "overcoming"                         # by sign, from the planet on the right
+bonify = ["trine", "square"]
+maltreat = ["square"]
+
+[conditions.opposition_trine]
+kind = "sign_aspect"
+side = "right"                              # the bonifying trine is a superior one
+bonify = ["trine"]
+maltreat = ["opposition"]
+
+[conditions.containment]
+kind = "containment"                        # by sign: one planet's rays fall on both signs either side
+
+[conditions.counteraction]
+kind = "counteraction"                      # the planet's domicile lord decides
+maltreat_places = [6, 12]
+bonify_places = [1, 5, 10, 11]
+
+[conditions.enclosure]
+kind = "enclosure"                          # bodies or rays on both sides, nothing intervening
+rays = ["sextile", "square", "trine", "opposition"]
+orb = 7
+
+[conditions.adherence]
+kind = "adherence"                          # the planet applies to a conjunction
+orb = 3
+moon_orb = 13
+
+[conditions.striking_with_a_ray]
+kind = "degree_aspect"
+direction = "backward"                      # a ray cast back in the order of signs
+bonify = ["trine", "square", "sextile"]
+maltreat = ["square"]
+orb = 3
+
+[conditions.engagement]
+kind = "degree_aspect"
+applying = true
+bonify = ["trine", "square", "sextile"]
+maltreat = ["square", "opposition"]
+orb = 3
+moon_orb = 13
+
+# Lots: measure from the first point to the second, then the same distance from the Ascendant.
+[lots.fortune]
+points = ["sun", "moon"]
+reverse = true
+variants = { never_reversed = "not reversed by night", moon_above_horizon_only = "reversed only with the Moon above the horizon" }
+
+[lots.spirit]
+points = ["moon", "sun"]
+reverse = true
+
+[lots.eros]
+version = "from_lots"
+from_lots = { points = ["lot:fortune", "lot:spirit"], reverse = true }
+from_planets = { points = ["lot:spirit", "venus"], reverse = true }
+
+[lots.necessity]
+version = "from_lots"
+from_lots = { points = ["lot:spirit", "lot:fortune"], reverse = true }
+from_planets = { points = ["mercury", "lot:fortune"], reverse = true }
+
+[lots.courage]
+points = ["mars", "lot:fortune"]
+reverse = true
+
+[lots.victory]
+points = ["lot:spirit", "jupiter"]
+reverse = true
+
+[lots.nemesis]
+points = ["saturn", "lot:fortune"]
+reverse = true
+
+[lots.father]
+points = ["sun", "saturn"]
+reverse = true
+fallback = { when = "saturn_under_beams", points = ["mars", "jupiter"], reverse = false }
+
+[lots.mother]
+points = ["venus", "moon"]
+reverse = true
+
+[lots.siblings]
+points = ["saturn", "jupiter"]
+reverse = false                             # never reversed in one lineage, reversed in the other: REVIEW
+
+[lots.children]
+points = ["jupiter", "saturn"]
+reverse = false
+
+[lots.livelihood]
+points = ["ruler:place:2", "place:2"]
+
+[lots.death]
+points = ["moon", "place:8"]
+project_from = "saturn"
+
+[lots.marriage]
+by_sex = { male = { points = ["saturn", "venus"] }, female = { points = ["venus", "saturn"] } }
+variants = { day_night = "Saturn to Venus by day, Venus to Saturn by night (for men)", husband = "Mars to Venus (for women)" }
+
+[lots.accusation]
+points = ["saturn", "mars"]
+reverse = true
+
+[lots.exaltation]
+day = ["sun", "sign:aries"]
+night = ["moon", "sign:taurus"]
+
+[lots.foundation]
+points = ["lot:fortune", "lot:spirit"]
+reverse = true
+distance = "shortest"                       # so it always falls below the horizon
+
+[timing.profections]
+starts = ["asc", "sect_light", "contrary_light"]   # the Hour-Marker, and the two lights
+step_signs = 1
+planets_in_sign = true                              # planets in the profected sign are activated too
+
+[timing.periods]
+minor_years = { sun = 19, moon = 25, mercury = 20, venus = 8, mars = 15, jupiter = 12, saturn = 30 }
+
+[timing.sect_light]
+quality = { angular = "good", succedent = "middling", declining = "bad" }
+changeover = ["minor_years", "ascensional_time"]
+
+[timing.transits]
+kinds = ["ingress", "sign_configurations", "exact"]   # sign-based from ingress; only the time lords'
+
+[timing.releasing]
+lots = ["spirit", "fortune"]
+year_days = 360
+levels = 4
+peaks = [1, 10, 7, 4]                       # angles from Fortune, strongest first
+loosing_of_bond = true
+same_sign_shift = true
+ruler_sign = true                           # flag subperiods in the sign holding the general period's ruler                      # Spirit in Fortune's sign moves on one sign
+periods = { aries = 15, taurus = 8, gemini = 20, cancer = 25, leo = 19, virgo = 20, libra = 8, scorpio = 15, sagittarius = 12, capricorn = 27, aquarius = 30, pisces = 12 }
+
+# Good and bad testimony for a planet: sect, place and condition of a ruler, the beams and retrograde motion, own
+# bounds, joys, depression, adversity (a late addition), heliacal phases, and the chariot as relief.
+[scoring]
+mode = "testimonies"
+good = ["of_sect", "domicile", "exaltation", "bounds", "good_place", "joy", "bonified", "chariot", "heliacal_emerging", "proper_face"]
+bad = ["contrary_to_sect", "depression", "adversity", "bad_place", "maltreated", "under_beams", "retrograde", "heliacal_sinking", "running_in_the_void"]
+
+# The lot checklist.
+[scoring.lots]
+good = ["lot_good_place", "benefic_copresent", "benefic_configured", "malefic_in_aversion", "lord_benefic", "lord_well_placed_by_sign", "lord_good_place", "lord_configured", "lord_configured_to_benefics", "lord_in_aversion_to_malefics", "lord_bonified", "lord_not_maltreated", "lord_not_under_beams"]
+bad = ["lot_bad_place", "malefic_copresent", "malefic_configured", "benefic_in_aversion", "lord_malefic", "lord_poorly_placed_by_sign", "lord_bad_place", "lord_not_configured", "lord_in_aversion_to_benefics", "lord_configured_to_malefics", "lord_not_bonified", "lord_maltreated", "lord_under_beams"]
+
+# Topics of life, each judged by three testimonies: the planet that matches it, the place that matches it and that
+# place's ruler, and the lot that matches it and its ruler; the more agree, the surer the outcome.
+[topics.character]
+label = "Character and direction"
+places = [1]
+significators = ["sun", "mercury"]
+lots = ["spirit"]
+
+[topics.body]
+label = "Body and health"
+places = [1, 6]
+significators = ["moon"]
+lots = ["fortune", "accusation"]
+
+[topics.livelihood]
+label = "Money and livelihood"
+places = [2]
+significators = ["jupiter"]
+lots = ["fortune", "livelihood"]
+
+[topics.career]
+label = "Work and reputation"
+degrees = ["mc"]
+places = [10]
+significators = ["sun", "mercury"]
+lots = ["spirit", "exaltation"]
+
+[topics.partnership]
+label = "Marriage and partnership"
+places = [7]
+significators = ["venus"]
+lots = ["eros", "marriage"]
+
+[topics.parents]
+label = "Parents"
+degrees = ["ic"]
+places = [4]
+significators = ["sun", "moon"]
+lots = ["father", "mother"]
+
+[topics.siblings]
+label = "Siblings"
+places = [3]
+significators = ["mercury"]
+lots = ["siblings"]
+
+[topics.children]
+label = "Children"
+places = [5]
+significators = ["jupiter"]
+lots = ["children"]
+
+[topics.friends]
+label = "Friends and allies"
+places = [11]
+significators = ["jupiter", "venus"]
+
+[topics.travel]
+label = "Travel, learning and belief"
+places = [9]
+significators = ["moon", "sun"]
+
+[topics.adversity]
+label = "Enemies and hardship"
+places = [12, 6]
+significators = ["mars", "saturn"]
+lots = ["necessity", "nemesis"]

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="astrolog-skills">
+<title>@TITLE@</title>
+<style>
+/*@STYLE@*/
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="head"><h1 id="title"></h1><span id="birth" class="birth"></span><div id="sect" class="sect" hidden></div></header>
+  <div class="layout">
+    <div class="wheel-col">
+      <svg id="wheel" viewBox="0 0 1000 1000" role="img" aria-labelledby="title"></svg>
+      <div id="hwrap" class="harmonic" hidden>
+        <input id="h" type="range" min="0" max="0" value="0" aria-label="Harmonic">
+        <output id="hval">H1</output>
+      </div>
+    </div>
+    <aside class="panel">
+      <div id="sections" class="sections" role="tablist" aria-label="Views" hidden></div>
+      <div id="aspects-view">
+        <h2>Aspects &amp; midpoints</h2>
+        <div id="tabs" class="tabs" role="tablist"></div>
+        <div id="tree" class="tree"></div>
+      </div>
+      <div id="study" class="study" hidden></div>
+    </aside>
+  </div>
+  <section id="timeline" class="timeline" hidden aria-label="Life timeline">
+    <h2>Life timeline</h2>
+    <p class="intro">Profection years and zodiacal releasing across the life. Peaks carry a mark sized by rank; a red cut is the loosing of the bond. Move the date to follow the time lords.</p>
+    <div class="tl-scroll"><svg id="tl" role="img" aria-label="Time lords across the life"></svg></div>
+    <div class="when"><label for="when">Date</label><input id="when" type="range" min="0" max="1" value="0"><output id="when-out"></output></div>
+  </section>
+</main>
+<div id="tip" class="tip" role="tooltip" hidden></div>
+<script type="application/json" id="chart-data">@DATA@</script>
+<script>
+/*@CORE@*/
+</script>
+<script>
+/*@APP@*/
+</script>
+</body>
+</html>

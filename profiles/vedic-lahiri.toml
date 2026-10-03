@@ -1,0 +1,17 @@
+name = "vedic-lahiri"
+description = "Sidereal zodiac (Lahiri ayanamsa), whole-sign houses, mean node — Jyotish-style"
+
+[zodiac]
+type = "sidereal"
+ayanamsa = "lahiri"
+
+[houses]
+system = "whole-sign"
+
+[points]
+node = "mean"
+objects = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "north_node", "south_node"]
+
+[links]
+pack = "psychological"
+theme = "default"

@@ -1,0 +1,21 @@
+# Python / tooling
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Never commit astrology databases or downloads (ADB data is licensed)
+data/
+tests/data/downloads/
+*.adb.xml
+
+# Local scratch
+.DS_Store
+
+# Local development notes (plans, reviews, design docs) — not part of the published plugin
+.claude/

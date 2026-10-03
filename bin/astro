@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# astrolog-skills: run the toolkit from this plugin's root with uv.
+# The venv lives outside the plugin (the plugin folder is replaced on every update).
+set -euo pipefail
+src="${BASH_SOURCE[0]}"
+while [ -L "$src" ]; do
+  dir="$(cd -P "$(dirname "$src")" && pwd)"
+  src="$(readlink "$src")"
+  [[ $src != /* ]] && src="$dir/$src"
+done
+root="$(cd -P "$(dirname "$src")/.." && pwd)"
+if ! command -v uv >/dev/null 2>&1; then
+  echo "✗ astrolog-skills needs uv (the Python runner)." >&2
+  echo "  → install it: curl -LsSf https://astral.sh/uv/install.sh | sh   (then restart your agent or terminal)" >&2
+  exit 127
+fi
+export ASTROLOG_SKILLS_PLUGIN_ROOT="$root"
+# uv run puts its venv first on PATH; keep the caller's PATH so doctor can see what `astro` really resolves to.
+export ASTROLOG_SKILLS_CALLER_PATH="$PATH"
+export UV_PROJECT_ENVIRONMENT="${ASTROLOG_SKILLS_VENV:-${XDG_CACHE_HOME:-$HOME/.cache}/astrolog-skills/venv}"
+exec uv run --quiet --frozen --no-dev --project "$root" python -m astrolog_skills "$@"

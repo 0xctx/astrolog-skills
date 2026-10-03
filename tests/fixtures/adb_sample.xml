@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<astrodatabank_export export_format="260911" filename="synthetic_test.xml">
+  <!-- Synthetic records in the Astro-Databank export format; the people are invented. -->
+  <adb_entry adb_id="1">
+    <public_data>
+      <name>Tester, Ada</name><sflname>Ada Tester</sflname>
+      <gender csex="f">F</gender><roddenrating rrc="1">AA</roddenrating>
+      <datatype sdatatype="Public Figure" dtc="1" />
+      <bdata>
+        <sbdate ccalendar="g" iyear="1879" imonth="3" iday="14">1879/03/14</sbdate>
+        <sbtime jd_ut="2407422.951389" stimetype="local mean time">11:30</sbtime>
+        <place slati="48n24" slong="10e00">Ulm</place><country sctr="GERMANY">Germany</country>
+      </bdata>
+    </public_data>
+    <research_data><categories count="2">
+      <category cat_id="1">Vocation : Science : Physics</category>
+      <category cat_id="2">Notable : Famous : Top 5% of Profession</category>
+    </categories></research_data>
+  </adb_entry>
+  <adb_entry adb_id="2">
+    <public_data>
+      <name>Early, Julian</name><sflname>Julian Early</sflname>
+      <gender csex="m">M</gender><roddenrating rrc="3">B</roddenrating>
+      <datatype sdatatype="Public Figure" dtc="1" />
+      <bdata>
+        <sbdate ccalendar="j" iyear="1501" imonth="9" iday="24">1501/09/24</sbdate>
+        <sbtime jd_ut="2269565.244676" stimetype="local mean time">18:29</sbtime>
+        <place slati="45n10" slong="9e10">Pavia</place><country sctr="ITALY">Italy</country>
+      </bdata>
+    </public_data>
+    <research_data><categories count="1"><category cat_id="3">Vocation : Entertain/Music : Composer/ Arranger</category></categories></research_data>
+  </adb_entry>
+  <adb_entry adb_id="3">
+    <public_data>
+      <name>Group 1</name><sflname>C-Section 1</sflname>
+      <gender csex="f">F</gender><roddenrating rrc="1">AA</roddenrating>
+      <datatype sdatatype="Anonymous" dtc="9" />
+      <bdata>
+        <sbdate ccalendar="g" iyear="1990" imonth="7" iday="1">1990/07/01</sbdate>
+        <sbtime jd_ut="2448073.666667" stimetype="standard time">14:00</sbtime>
+        <place slati="33s52" slong="151e12">Sydney</place><country>Australia</country>
+      </bdata>
+    </public_data>
+  </adb_entry>
+  <adb_entry adb_id="4">
+    <public_data>
+      <name>Unknown, Time</name><sflname>Time Unknown</sflname>
+      <gender csex="m">M</gender><roddenrating rrc="7">X</roddenrating>
+      <datatype sdatatype="Public Figure" dtc="1" />
+      <bdata>
+        <sbdate ccalendar="g" iyear="1950" imonth="1" iday="1">1950/01/01</sbdate>
+        <sbtime></sbtime>
+        <place slati="40n43" slong="74w00">New York</place><country>USA</country>
+      </bdata>
+    </public_data>
+  </adb_entry>
+  <adb_entry adb_id="5">
+    <public_data>
+      <name>Musician, Mo</name><sflname>Mo Musician</sflname>
+      <gender csex="m">M</gender><roddenrating rrc="2">A</roddenrating>
+      <datatype sdatatype="Public Figure" dtc="1" />
+      <bdata>
+        <sbdate ccalendar="g" iyear="1970" imonth="6" iday="15">1970/06/15</sbdate>
+        <sbtime jd_ut="2440752.791667" stimetype="standard time">08:00</sbtime>
+        <place slati="51n30" slong="0w07">London</place><country>England</country>
+      </bdata>
+    </public_data>
+    <research_data><categories count="1"><category cat_id="4">Vocation : Entertain/Music : Instrumentalist</category></categories></research_data>
+  </adb_entry>
+</astrodatabank_export>

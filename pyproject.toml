@@ -1,0 +1,65 @@
+[project]
+name = "astrolog-skills"
+version = "0.1.0"
+description = "Professional astrology in plain English on your own Astrolog — a Claude Code plugin toolkit."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = [
+    "typer>=0.27,<0.28",
+    "rich>=15,<16",
+    "tomli-w>=1.2",
+    "tzdata>=2026.4",
+    "numpy>=2.5.3",
+]
+
+[project.urls]
+Homepage = "https://github.com/0xctx/astrolog-skills"
+Issues = "https://github.com/0xctx/astrolog-skills/issues"
+
+[project.scripts]
+astro = "astrolog_skills.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/astrolog_skills"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1",
+    "ruff>=0.16",
+    "mypy>=2.3",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+# ambiguous-unicode: astrology glyphs and primes (′ ″) are intentional
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.lint.per-file-ignores]
+# typer.Option(...) in defaults is how Typer declares options
+"src/astrolog_skills/cli/commands/*" = ["B008"]
+# reader-facing sentences built from numbers: kept whole rather than split mid-phrase
+"src/astrolog_skills/analysis/doctrine/explain.py" = ["E501"]
+"src/astrolog_skills/render/views/study.py" = ["E501"]
+
+[tool.mypy]
+strict = true
+packages = ["astrolog_skills"]
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "astrolog: needs a real Astrolog binary on this machine",
+    "network: downloads from GitHub",
+    "build: compiles Astrolog from source (slow)",
+]
+addopts = "-m 'not network and not build'"

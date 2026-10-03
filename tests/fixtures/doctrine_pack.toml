@@ -1,0 +1,201 @@
+# Test doctrine: traditional tables (historical facts), placeholder citations. Not drawn from any one book's wording.
+label = "Doctrine test"
+
+[orbs]
+rule = "harmonic"
+
+[sect]
+cite = "p. 1"
+diurnal = ["sun", "jupiter", "saturn"]
+nocturnal = ["moon", "venus", "mars"]
+mercury = "morning_evening"
+[sect.rejoicing]
+by_hemisphere = true
+by_sign = "gender"
+
+[dignities]
+cite = "p. 2"
+domicile = { aries = "mars", taurus = "venus", gemini = "mercury", cancer = "moon", leo = "sun", virgo = "mercury", libra = "venus", scorpio = "mars", sagittarius = "jupiter", capricorn = "saturn", aquarius = "saturn", pisces = "jupiter" }
+exaltation = { sun = ["aries", 19], moon = ["taurus", 3], mercury = ["virgo", 15], venus = ["pisces", 27], mars = ["capricorn", 28], jupiter = ["cancer", 15], saturn = ["libra", 21] }
+triplicity = { fire = ["sun", "jupiter", "saturn"], earth = ["venus", "moon", "mars"], air = ["saturn", "mercury", "jupiter"], water = ["venus", "mars", "moon"] }
+bounds_scheme = "egyptian"
+twelfth_parts = { multiplier = 12 }
+[dignities.decans]
+scheme = "chaldean"
+[dignities.bounds.egyptian]
+aries = [["jupiter", 6], ["venus", 12], ["mercury", 20], ["mars", 25], ["saturn", 30]]
+taurus = [["venus", 8], ["mercury", 14], ["jupiter", 22], ["saturn", 27], ["mars", 30]]
+gemini = [["mercury", 6], ["jupiter", 12], ["venus", 17], ["mars", 24], ["saturn", 30]]
+cancer = [["mars", 7], ["venus", 13], ["mercury", 19], ["jupiter", 26], ["saturn", 30]]
+leo = [["jupiter", 6], ["venus", 11], ["saturn", 18], ["mercury", 24], ["mars", 30]]
+virgo = [["mercury", 7], ["venus", 17], ["jupiter", 21], ["mars", 28], ["saturn", 30]]
+libra = [["saturn", 6], ["mercury", 14], ["jupiter", 21], ["venus", 28], ["mars", 30]]
+scorpio = [["mars", 7], ["venus", 11], ["mercury", 19], ["jupiter", 24], ["saturn", 30]]
+sagittarius = [["jupiter", 12], ["venus", 17], ["mercury", 21], ["saturn", 26], ["mars", 30]]
+capricorn = [["mercury", 7], ["jupiter", 14], ["venus", 22], ["saturn", 26], ["mars", 30]]
+aquarius = [["mercury", 7], ["venus", 13], ["jupiter", 20], ["mars", 25], ["saturn", 30]]
+pisces = [["venus", 12], ["jupiter", 16], ["mercury", 19], ["mars", 28], ["saturn", 30]]
+
+[phase]
+cite = "p. 12"
+under_beams = 15
+weak_within = 9
+heart = 1
+heliacal_days = 7
+visible_beyond = 15
+chariot = ["domicile", "exaltation", "bounds"]
+
+[lots.fortune]
+cite = "p. 3"
+points = ["sun", "moon"]
+reverse = true
+variants = { never_reversed = "p. 3" }
+
+[lots.spirit]
+cite = "p. 3"
+points = ["moon", "sun"]
+reverse = true
+
+[lots.eros]
+cite = "p. 4"
+version = "early"
+early = { points = ["lot:fortune", "lot:spirit"], reverse = true }
+later = { points = ["lot:spirit", "venus"], reverse = true }
+
+[lots.father]
+cite = "p. 4"
+points = ["sun", "saturn"]
+reverse = true
+fallback = { when = "saturn_under_beams", points = ["mars", "jupiter"], reverse = false }
+
+[lots.death]
+cite = "p. 5"
+points = ["moon", "place:8"]
+project_from = "saturn"
+
+[lots.livelihood]
+cite = "p. 5"
+points = ["ruler:place:2", "place:2"]
+
+[lots.exaltation]
+cite = "p. 5"
+day = ["sun", "sign:aries"]
+night = ["moon", "sign:taurus"]
+
+[lots.foundation]
+cite = "p. 5"
+points = ["lot:fortune", "lot:spirit"]
+reverse = true
+distance = "shortest"
+
+[conditions.overcoming]
+cite = "p. 6"
+kind = "overcoming"
+bonify = ["trine", "square"]
+maltreat = ["square"]
+
+[conditions.opposition_trine]
+cite = "p. 6"
+kind = "sign_aspect"
+bonify = ["trine"]
+maltreat = ["opposition"]
+
+[conditions.counteraction]
+cite = "p. 6"
+kind = "counteraction"
+maltreat_places = [6, 12]
+bonify_places = [1, 5, 10, 11]
+
+[conditions.enclosure]
+cite = "p. 6"
+kind = "enclosure"
+rays = ["sextile", "square", "trine", "opposition"]
+orb = 7
+
+[conditions.adherence]
+cite = "p. 6"
+kind = "adherence"
+orb = 3
+moon_orb = 13
+
+[conditions.striking_with_a_ray]
+cite = "p. 6"
+kind = "degree_aspect"
+bonify = ["sextile", "square", "trine"]
+maltreat = ["square"]
+orb = 3
+direction = "backward"
+
+[conditions.engagement]
+cite = "p. 6"
+kind = "degree_aspect"
+bonify = ["sextile", "square", "trine"]
+maltreat = ["square", "opposition"]
+orb = 3
+moon_orb = 13
+applying = true
+
+[places]
+cite = "p. 7"
+good = [1, 2, 4, 5, 7, 9, 10, 11]
+bad = [3, 6, 8, 12]
+busy = [1, 2, 4, 5, 7, 9, 10, 11]
+joys = { mercury = 1, moon = 3, venus = 5, mars = 6, sun = 9, jupiter = 11, saturn = 12 }
+
+[timing.profections]
+cite = "p. 8"
+starts = ["asc", "sect_light", "contrary_light"]
+planets_in_sign = true
+
+[timing.periods]
+cite = "p. 8"
+minor_years = { sun = 19, moon = 25, mercury = 20, venus = 8, mars = 15, jupiter = 12, saturn = 30 }
+
+[timing.sect_light]
+cite = "p. 8"
+quality = { angular = "good", succedent = "middling", declining = "bad" }
+changeover = ["minor_years", "ascensional_time"]
+
+[timing.releasing]
+cite = "p. 9"
+lots = ["fortune", "spirit"]
+year_days = 360
+levels = 4
+peaks = [1, 10, 7, 4]
+loosing_of_bond = true
+same_sign_shift = true
+periods = { aries = 15, taurus = 8, gemini = 20, cancer = 25, leo = 19, virgo = 20, libra = 8, scorpio = 15, sagittarius = 12, capricorn = 27, aquarius = 30, pisces = 12 }
+
+[timing.transits]
+cite = "p. 10"
+kinds = ["ingress", "sign_configurations", "exact"]
+
+[scoring]
+cite = "p. 11"
+mode = "testimonies"
+good = ["of_sect", "domicile", "exaltation", "triplicity_sect_ruler", "bounds", "angular", "good_place", "bonified"]
+bad = ["contrary_to_sect", "adversity", "depression", "under_beams", "retrograde", "bad_place", "maltreated"]
+[scoring.lots]
+good = ["lot_good_place", "benefic_configured", "lord_good_place", "lord_configured", "lord_bonified"]
+bad = ["lot_bad_place", "malefic_configured", "lord_bad_place", "lord_not_configured", "lord_maltreated", "lord_under_beams"]
+
+[topics.career]
+label = "Work and reputation"
+cite = "p. 13"
+places = [10]
+significators = ["sun", "mercury"]
+lots = ["spirit"]
+
+[topics.partnership]
+label = "Marriage and partnership"
+cite = "p. 13"
+places = [7]
+significators = ["venus"]
+lots = ["eros"]
+
+[topics.body]
+label = "Body and health"
+cite = "p. 13"
+places = [1, 6]
+significators = ["moon"]
+lots = ["fortune"]

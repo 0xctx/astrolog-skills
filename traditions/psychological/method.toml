@@ -1,0 +1,46 @@
+# Psychological / modern Western astrology — calculation rules.
+# Edit freely in your own copy: `astro packs copy psychological`.
+label = "Psychological (modern Western)"
+
+[aspects]
+set = ["conjunction", "opposition", "trine", "square", "sextile", "quincunx", "semisextile", "semisquare",
+       "sesquiquadrate", "quintile", "biquintile"]
+
+[orbs]
+rule = "fixed"
+conjunction = 8
+opposition = 8
+trine = 7
+square = 7
+sextile = 5
+quincunx = 3
+semisextile = 2
+semisquare = 2
+sesquiquadrate = 2
+quintile = 2
+biquintile = 2
+
+[harmonics]
+range = [1, 12]
+max = 32
+
+[patterns]
+# Stelliums and tight multi-planet groups: 3+ planets all within 8° (in the natal chart).
+orb = 8.0
+min_size = 3
+strong_size = 4
+bodies = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"]
+
+[weights]
+default = 1
+rules = [
+  { pair = ["luminaries", "*"], weight = 3 },
+  { pair = ["personal", "*"], weight = 2 },
+]
+
+[midpoints]
+# Midpoint trees: a planet on a midpoint, or in aspect to it. "all" = every aspect in [aspects] above, minor ones
+# included; or list them, e.g. ["conjunction", "opposition", "square"] for the classic 90° dial, [] for none.
+# The orb is in degrees of the chart shown.
+aspects = "all"
+orb = 1.5

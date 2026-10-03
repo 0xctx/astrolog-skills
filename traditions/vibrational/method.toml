@@ -1,0 +1,61 @@
+# Vibrational Astrology — calculation rules.
+# Edit freely in your own copy: `astro packs copy vibrational`. Sources: sources.toml. Open questions: REVIEW.md.
+label = "Vibrational Astrology"
+
+[aspects]
+# In vibrational astrology every harmonic is an aspect family; these are the ones shown in natal aspect lists.
+set = ["conjunction", "opposition", "trine", "square", "quintile", "biquintile", "sextile", "septile", "biseptile",
+       "triseptile", "semisquare", "sesquiquadrate", "novile", "binovile", "quadnovile", "semisextile", "quincunx"]
+
+[orbs]
+# Harmonic orbs: 16° in the harmonic chart, i.e. 16°/H in the natal chart (H8 → 2°, H32 → 0.5°).
+# (The study's "5 1/3° for H5" is a typo — the formula gives 3.2°; see REVIEW.md.)
+rule = "harmonic"
+base = 16.0
+
+[harmonic_chart_orbs]
+# Aspects read *inside* a harmonic chart ("overtones", e.g. a trine in H5 = H15).
+conjunction = 16.0
+opposition = 8.0
+square = 8.0
+trine = 6.0
+sextile = 6.0
+
+[harmonics]
+range = [1, 32]      # "well understood" range; research sweeps can go to max
+max = 180
+exclude_lower = false
+
+[patterns]
+orb = 16.0           # degrees in the harmonic chart: every pair in a pattern must be this close
+min_size = 3         # "3 planet patterns OK"
+strong_size = 4      # "4 is better" — score 1 counts 4-planet patterns
+bodies = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"]
+
+[weights]
+# Score 2 (First 32 Harmonics, analysis 2): pair weights × tightness. First matching rule wins.
+default = 1
+rules = [
+  { pair = ["sun", "moon"], weight = 10 },
+  { pair = ["personal", "pluto"], weight = 5 },
+  { pair = ["personal", "*"], weight = 8 },
+  { pair = ["jupiter", "pluto"], weight = 2 },
+  { pair = ["social", "*"], weight = 3 },        # Jup–Sat, Jup/Sat–Ura/Nep; Sat–Plu assumed 3 (REVIEW.md)
+  { pair = ["uranus", "neptune"], weight = 2 },
+  { pair = ["outer", "pluto"], weight = 1 },
+]
+
+[midpoints]
+# Midpoint trees: a planet on a midpoint, or in aspect to it. "all" = every aspect in [aspects] above, minor ones
+# included; or list them, e.g. ["conjunction", "opposition", "square"] for the classic 90° dial, [] for none.
+# Two methods (both are always available: `astro harmonics`, `--midpoints old|new`, the switch on the HTML page):
+# - "new": the angle from a planet to the midpoint in the natal chart × H, read like any aspect — conjunction orb
+#   `new_orb` (3°; 4° to include the weakest), the others in proportion (opposition 1.5°, square 45′…). Each
+#   structure has one strength and its own vibration. Proposed in 2026; awaiting controlled research (REVIEW.md).
+# - "old": the midpoint inside the harmonic chart as an axis (conjunction = opposition, orb `orb`), the others in
+#   proportion (square 45′, semisquare 22.5′).
+# Orbs are in degrees of the harmonic chart. The birth chart (H1) uses "old": there both measure the same angle.
+method = "new"
+aspects = "all"
+orb = 1.5
+new_orb = 3.0

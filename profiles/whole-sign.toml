@@ -1,0 +1,18 @@
+name = "whole-sign"
+description = "Tropical zodiac, whole-sign houses, true node — Hellenistic-style houses"
+
+[zodiac]
+type = "tropical"
+ayanamsa = ""
+
+[houses]
+system = "whole-sign"
+
+[points]
+node = "true"
+objects = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto",
+           "north_node", "south_node", "fortune"]
+
+[links]
+pack = "psychological"
+theme = "default"

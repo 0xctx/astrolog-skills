@@ -1,0 +1,61 @@
+# astrolog-skills terminal theme. Copy it to edit: `astro theme copy default --as mine`, then `--theme mine`
+# (or `astro config set display.theme mine`). Colours are [red, green, blue], 0–255.
+label = "Pastel sky"
+glyphs = true        # planet and aspect symbols; false = letters (for fonts without astrology symbols)
+shade = "░"          # texture in empty rows of the sign boxes
+
+[ui]
+page = [14, 16, 30]
+frame = [120, 220, 235]
+frame_text = [20, 20, 30]
+center_bg = [24, 28, 58]
+label = [150, 200, 255]
+text = [235, 240, 255]
+dim = [130, 140, 180]
+title = [255, 230, 140]
+retro = [255, 120, 140]
+grid_bg = [20, 22, 42]
+cell_a = [30, 33, 60]
+cell_b = [24, 27, 52]
+white = [255, 255, 255]
+
+# Element colours: fire red, earth green, air lavender (not yellow), water blue.
+[elements.fire]
+header_bg = [255, 150, 125]
+header_text = [45, 10, 5]
+body_bg = [92, 38, 40]
+texture = [122, 62, 62]
+accent = [255, 190, 165]
+
+[elements.earth]
+header_bg = [135, 215, 145]
+header_text = [5, 40, 15]
+body_bg = [34, 78, 50]
+texture = [58, 108, 74]
+accent = [175, 240, 180]
+
+[elements.air]
+header_bg = [200, 180, 250]
+header_text = [30, 15, 60]
+body_bg = [66, 56, 104]
+texture = [94, 84, 136]
+accent = [220, 205, 255]
+
+[elements.water]
+header_bg = [135, 190, 255]
+header_text = [5, 25, 60]
+body_bg = [34, 60, 110]
+texture = [58, 86, 142]
+accent = [175, 215, 255]
+
+# Aspect family colours (traditional: red hard, blue soft, gold conjunction).
+[aspects]
+conjunction = [255, 205, 70]
+hard = [255, 95, 95]
+soft = [95, 170, 255]
+green = [120, 220, 140]
+pink = [255, 150, 170]
+quintile = [230, 120, 255]
+septile = [70, 220, 210]
+novile = [255, 170, 80]
+decile = [220, 210, 130]

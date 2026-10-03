@@ -1,0 +1,11 @@
+# Sources for this pack. It is a sample of the Hellenistic tradition's common doctrine, written for this toolkit:
+# its rules, tables and formulas belong to the tradition itself, and it carries no page citations.
+#
+# Build your own cited version from books or courses you own — they stay private on your computer:
+#   astro sources add hellenistic <file.pdf | notes.md | transcript.srt>
+# then ask Claude to "build the tradition's rules from my sources". Your pack replaces this one.
+
+[[source]]
+id = "tradition"
+title = "The Hellenistic tradition's common doctrine (summarised for this toolkit)"
+covers = "sect, dignities (domicile, exaltation, triplicity, Egyptian bounds, decans, twelfth-parts), solar phase, places, configurations, bonification and maltreatment, lots, rulers, life topics, profections, the sect light's lords, zodiacal releasing, time-lord transits"

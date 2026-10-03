@@ -1,0 +1,18 @@
+name = "vibrational"
+description = "Tropical zodiac, Placidus houses, true node, ten planets + nodes — for vibrational astrology"
+
+[zodiac]
+type = "tropical"
+ayanamsa = ""
+
+[houses]
+system = "placidus"
+
+[points]
+node = "true"
+objects = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto",
+           "north_node", "south_node"]
+
+[links]
+pack = "vibrational"
+theme = "default"

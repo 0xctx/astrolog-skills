@@ -1,0 +1,19 @@
+# astrolog-skills settings profile — copy with `astro profile new <name>` and edit the copy.
+name = "default"
+description = "Tropical zodiac, Placidus houses, true node — the modern Western default"
+
+[zodiac]
+type = "tropical"        # "tropical" or "sidereal"
+ayanamsa = ""            # sidereal only: lahiri, fagan-bradley, krishnamurti, raman, … or degrees
+
+[houses]
+system = "placidus"      # placidus, koch, equal, whole-sign, porphyry, regiomontanus, campanus, … (23 systems)
+
+[points]
+node = "true"            # "true" or "mean"
+objects = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto",
+           "chiron", "north_node", "south_node"]
+
+[links]
+pack = "psychological"   # tradition pack used for interpretation
+theme = "default"        # terminal theme

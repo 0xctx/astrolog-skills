@@ -1,0 +1,16 @@
+# Worked examples: published results for example charts (numbers and verdicts only, no wording), checked against the
+# doctrine engine with the real Astrolog.
+
+[[example]]
+name = "Einstein"
+date = "1879-03-14"
+time = "11:30"
+tz = "LMT"
+lat = 48.4
+lon = 10.0
+day = true
+rising = "Cancer"
+places = { moon = 6, venus = 10 }
+conditions = [
+  { target = "moon", actor = "venus", condition = "striking_with_a_ray", effect = "bonify", aspect = "trine", applying = true, distance = 2.46 },
+]

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "astrolog-skills",
+  "description": "Astrolog Skills — astrology in plain English for Claude Code, powered by your own Astrolog.",
+  "owner": { "name": "astrolog-skills contributors" },
+  "plugins": [
+    {
+      "name": "astrolog-skills",
+      "displayName": "Astrolog Skills",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Charts, transits, harmonics and midpoint structures, research at scale, traditions built from your own books, terminal and HTML views — on your own Astrolog.",
+      "category": "productivity",
+      "keywords": ["astrology", "astrolog", "harmonics", "vibrational-astrology", "midpoints", "hellenistic"]
+    }
+  ]
+}

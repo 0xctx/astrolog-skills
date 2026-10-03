@@ -1,0 +1,43 @@
+# Citations for this pack. The toolkit and Claude cite these; the texts themselves are not included.
+
+[[source]]
+id = "cochrane-first32"
+title = "The First 32 Harmonics: A Qualitative Research Study"
+author = "David Cochrane"
+year = 2012
+publisher = "Cosmic Patterns Software"
+url = "https://www.astrosoftware.com/harmonicfirst32.pdf"
+covers = "16° harmonic-chart orb (16°/H natal), 4-planet patterns, pair weights, overtones, midpoint support"
+
+[[source]]
+id = "berry-uac2018"
+title = "Forecasting with Vibrational Astrology"
+author = "Linda Berry"
+year = 2018
+publisher = "United Astrology Conference"
+url = "https://static.sched.com/hosted_files/uac2018/ae/Forecasting%20with%20Vibrational%20Astrology.pdf"
+covers = "three principles (3–4 planet patterns, tighter = stronger), harmonic meanings H5–H31, two-step forecasting"
+
+[[source]]
+id = "cochrane-essentials"
+title = "Vibrational Astrology: The Essentials"
+author = "David Cochrane"
+publisher = "Cosmic Patterns Software"
+url = "https://books.google.com/books/about/Vibrational_Astrology.html?id=SxOBzgEACAAJ"
+covers = "core method (not quoted here)"
+
+[[source]]
+id = "berry-cochrane-aspects"
+title = "Vibrational Astrology: Interpreting Aspects"
+author = "Linda Berry and David Cochrane"
+url = "https://www.lulu.com/shop/linda-berry-and-david-cochrane/vibrational-astrology-interpreting-aspects/paperback/product-24510037.html"
+covers = "aspect meanings in several harmonics (not quoted here)"
+
+[[source]]
+id = "cochrane-midpoints2026"
+title = "Midpoint Structures: New Insights (video)"
+author = "David Cochrane"
+year = 2026
+publisher = "Evidence-Based Vibrational Astrology (YouTube)"
+url = "https://www.youtube.com/watch?v=qKB9QV43X_E"
+covers = "the natal-referenced midpoint method: angle to the midpoint × H, 3° conjunction orb (4° optional), proportionate orbs, one strength per structure; the old method's axis; worked examples (Moon 20°02′ from Sun/Saturn, Venus 23′ square Moon/Neptune)"

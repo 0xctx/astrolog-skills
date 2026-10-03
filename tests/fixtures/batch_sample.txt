@@ -1,0 +1,19 @@
+Astrolog 7.80 chart for Test Person A
+Tue Nov 29, 1825  7:00:00pm (ST Zone LMT) Somewhere, Nowhere   2:20'00E 48:52'00N
+Body  Location   Ret. Latitude Rul.      House  Rul. Velocity  Lat-Velocity
+Sun :  7Sag20'03"   - 0:00'00" (-) [ 5th house] [R] +1.0139043 -0.0000299
+Moon: 25Can09'18"   - 3:38'14" (R) [ 1st house] [-] +13.061509 -0.8765063
+Satu: 19Gem21'19" R - 1:34'02" (-) [12th house] [-] -0.0795891 +0.0008500
+Plut:  2Ari15'16" R -16:47'04" (-) [10th house] [-] -0.0065086 +0.0055087
+Chir: 17Ari11'59" R + 1:05'30" (-) [10th house] [f] -0.0259918 -0.0021281
+Nort: 12Sag06'18" R + 0:00'00" (f) [ 5th house] [d] -0.0529320 +0.0000000
+Xyzw: 1Ari00'00"   + 0:00'00" (-) [ 1st house] [-] +0.0000000 +0.0000000
+Asce: 11Can38'47"   + 0:00'00"     [ 1st house]     +297.44180 +0.0000000
+Midh: 12Pis50'23"   + 0:00'00"     [10th house]     +388.07619 +0.0000000
+
+
+Astrolog 7.80: Sun Jul  1, 1990 12:00:00pm (ST Zone 0:00W)  13:24'00E 52:30'00N
+Body  Location   Ret. Latitude Rul.      House  Rul. Velocity  Lat-Velocity
+
+Sun :  9Can23'58"   - 0:00'00" (-) [ 9th house] [-] +0.9534036 -0.0000186
+Moon: 27Lib00'07"   - 5:07'35" (-) [ 1st house] [-] +11.979024 -0.2008238
