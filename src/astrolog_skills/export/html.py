@@ -126,6 +126,18 @@ def payload(
                 },
             },
             "harmonic_range": list(m.harmonic_range),
+            "transits": [
+                {
+                    "key": a.key,
+                    "name": a.name,
+                    "angle": a.angle,
+                    "orb": m.transit_orb(a),
+                    "family": a.family,
+                    "glyph": a.glyph,
+                    "harmonic": a.harmonic,
+                }
+                for a in m.transit_types()
+            ],
             "midpoints": {
                 "aspects": [
                     {

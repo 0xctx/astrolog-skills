@@ -96,3 +96,30 @@ def baseline(bodies: int, highest: int, new_orb: float, old_orb: float) -> dict[
     except OSError:
         pass  # a cache that can't be written is only slower
     return out
+
+
+GROUP_RUNS = 2000
+
+
+@lru_cache(maxsize=16)
+def group_baseline(bodies: int, orb: float, min_size: int) -> tuple[float, float]:
+    """Mean and spread of a random chart's planet-group score (patterns.group_score). The same in every harmonic: in
+    a random chart, positions multiplied by H are still independent and uniform, so one baseline serves all."""
+    from astrolog_skills.analysis.patterns import find_patterns, group_score
+
+    path = data_dir() / "cache" / f"group-chance-v{VERSION}-{bodies}-{orb:g}-{min_size}.json"
+    try:
+        mean, sd = json.loads(path.read_text())
+        return float(mean), float(sd)
+    except (OSError, ValueError, TypeError):
+        pass
+    rng = np.random.default_rng(SEED)
+    keys = [str(k) for k in range(bodies)]
+    scores = [
+        group_score(find_patterns(dict(zip(keys, row, strict=True)), orb, min_size))
+        for row in rng.uniform(0.0, 360.0, (GROUP_RUNS, bodies))
+    ]
+    out = (round(float(np.mean(scores)), 4), round(float(np.std(scores)), 4))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(out))
+    return out

@@ -7,7 +7,8 @@ import pytest
 
 from astrolog_skills.analysis.aspects_registry import BY_KEY
 from astrolog_skills.analysis.method import parse
-from astrolog_skills.analysis.transits import transit_aspects, window
+from astrolog_skills.analysis.transit_timeline import Selection, build
+from astrolog_skills.analysis.transits import transit_aspects
 from astrolog_skills.engine import profile as P
 from astrolog_skills.engine.model import ChartModel, Point
 from astrolog_skills.engine.objects import BY_KEY as OBJ
@@ -44,9 +45,10 @@ def test_transit_aspects_applying_and_angles() -> None:
     assert ("saturn", "asc") in found and found[("saturn", "asc")].aspect == "square"
 
 
-def test_window_finds_exact_dates(fake_astrolog: Path) -> None:
+def test_timeline_finds_exact_dates(fake_astrolog: Path) -> None:
     natal = model({"sun": (0.0, 1.0)})
     start = datetime(2000, 1, 1, 12, tzinfo=UTC)
-    found = window(natal, P.load("default"), loader.load("psychological").method, start, 60, 48.4, 10.0)
-    assert found and all(w.enters <= (w.exact or w.enters) <= w.leaves for w in found)
-    assert all(w.transit != "moon" for w in found)
+    found = build(natal, P.load("default"), loader.load("psychological").method, start, 60, 48.4, 10.0, Selection())
+    rows = found.passages
+    assert rows and all(p.enters <= e <= p.leaves for p in rows for e in p.exact)
+    assert all(p.transit != "moon" for p in rows)

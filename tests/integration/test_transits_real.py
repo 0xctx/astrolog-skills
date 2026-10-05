@@ -9,7 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from astrolog_skills.analysis.transits import transit_aspects, window
+from astrolog_skills.analysis.transit_timeline import Selection, build
+from astrolog_skills.analysis.transits import transit_aspects
 from astrolog_skills.engine import profile as P
 from astrolog_skills.engine.cast import cast
 from astrolog_skills.engine.moment import Moment
@@ -29,11 +30,13 @@ def real(monkeypatch: pytest.MonkeyPatch) -> Path:
 
 
 def test_saturn_return_is_found(real: Path) -> None:
-    """Einstein's first Saturn return (Saturn back to ~4° Aries) fell in 1908."""
+    """Einstein's first Saturn return (Saturn back to ~4° Aries) fell in 1908, with its retrograde passes."""
     natal = cast(Moment("1879-03-14", "11:30", "LMT", 48.4, 10.0, "Einstein"), P.load("default"))
     method = loader.load("psychological").method
-    found = window(natal, P.load("default"), method, datetime(1907, 6, 1, 12, tzinfo=UTC), 540, 48.4, 10.0)
-    returns = [w for w in found if (w.transit, w.natal, w.aspect) == ("saturn", "saturn", "conjunction")]
-    assert returns and returns[0].min_orb < 0.2 and returns[0].exact and returns[0].exact.startswith(("1907", "1908"))
-    sky = cast(Moment(returns[0].exact, "12:00", "UTC", 48.4, 10.0), P.load("default"))
+    start = datetime(1907, 6, 1, 12, tzinfo=UTC)
+    found = build(natal, P.load("default"), method, start, 540, 48.4, 10.0, Selection(midpoints=False)).passages
+    returns = [p for p in found if (p.transit, p.natal, p.aspect) == ("saturn", "saturn", "conjunction")]
+    hits = [e for p in returns for e in p.exact]
+    assert hits and all(e.startswith(("1907", "1908", "1909")) for e in hits)
+    sky = cast(Moment(hits[0], "12:00", "UTC", 48.4, 10.0), P.load("default"))
     assert any(t.transit == "saturn" and t.natal == "saturn" for t in transit_aspects(natal, sky, method))

@@ -5,7 +5,7 @@ description: Export astrology charts from astrolog-skills as beautiful, self-con
 
 # HTML charts
 
-`astro --json export html --chart NAME [--harmonic H | --harmonics SPEC] [--pack P] [--profile P] [--theme T] [--out PATH]`
+`astro --json export html --chart NAME [--harmonic H | --harmonics SPEC] [--transits DATE --days N] [--pack P] [--profile P] [--theme T] [--out PATH]`
 
 - **Which harmonics:** `--harmonic 7` → a single H7 chart (no slider). `--harmonics 1-12` → a slider through that range;
   `--harmonics 1,5,7,11` or `1-12,16,20` → a slider through exactly that series. Neither → the pack's harmonic range
@@ -18,6 +18,13 @@ description: Export astrology charts from astrolog-skills as beautiful, self-con
   lines coloured by family, brighter/thicker when tighter), a harmonic slider under the wheel only when several
   harmonics were chosen, and, beside it, a panel with a tab per planet (plus AC/MC) listing its aspects then midpoints; picking a tab or clicking a planet lights its aspect lines. Hover planets and aspect
   lines for details; it prints cleanly.
+- **Transits:** `--transits DATE|now [--days N]` (default 180, up to 730) adds the transit timeline under the wheel
+  (every transit to the natal planets, angles and midpoints, under a header per transiting planet, each bar
+  brightest on its exact days; the harmonic in its hover text; chips to switch transiting
+  bodies, harmonics and midpoints on or off; the harmonic patterns as buttons), a date slider, an inner ring of
+  transiting planets multiplied by the harmonic shown (the harmonic transit chart), and the selected planet's
+  transits in its panel. Clicking a transit or pattern goes to its day and harmonic — use `--harmonics 1-32` so the
+  wheel can follow.
 - **Hover text:** by default hovering a row shows just the contact ("Mercury conjunction Saturn"). With `--interp`,
   it adds a snippet of the person's written reading when one exists (`~/.astrolog-skills/notes/<name>-<pack>.json`,
   written by the `report` skill; `--notes FILE` for another); contacts without a note still show only the title.

@@ -90,7 +90,9 @@ def transits(v: ViewData, theme: Theme, width: int = 80) -> Canvas:
     rows = (v.transit_aspects or [])[:40]
     w = min(width, 76)
     when = v.transit.moment.get("date", "") if v.transit else ""
-    cv = _panel(theme, w, max(1, len(rows)) + 4, f"TRANSITS {when}".strip())
+    cv = _panel(
+        theme, w, max(1, len(rows)) + 4, (f"TRANSITS {when}" + (f" · H{v.harmonic}" if v.harmonic > 1 else "")).strip()
+    )
     natal = {p.key: p for p in v.natal.points}
     moving = {p.key: p for p in v.transit.points} if v.transit else {}
     if not rows:

@@ -144,14 +144,22 @@ def _centre(cv: Canvas, v: ViewData, theme: Theme, w: int) -> None:
 
     pm = v.pack.method
     shown_orb = pm.pattern_orb / v.orb_scale
-    cv.put(x + 2, y + 10, f"PLANET GROUPS · within {shown_orb:.3g}°"[: cw - 4], ui["label"], bg, True)
-    pats = v.patterns.patterns
+    with_transits = v.transit_patterns is not None
+    title = "GROUPS WITH TRANSITS" if with_transits else "PLANET GROUPS"
+    cv.put(x + 2, y + 10, f"{title} · within {shown_orb:.3g}°"[: cw - 4], ui["label"], bg, True)
+    pats = v.transit_patterns if v.transit_patterns is not None else v.patterns.patterns
     if not pats:
-        cv.put(x + 2, y + 11, "none (3+ planets all this close)", ui["dim"], bg)
-    names = {p.key: p for p in v.natal.points}
+        none = "none (a transit with 2+ natal planets)" if with_transits else "none (3+ planets all this close)"
+        cv.put(x + 2, y + 11, none, ui["dim"], bg)
+    names = {p.key: p for p in [*(v.transit.points if v.transit else []), *v.natal.points]}
+
+    def short(b: str) -> str:  # "t:saturn" → "tSat"
+        key = b.removeprefix("t:")
+        return ("t" if b.startswith("t:") else "") + short_name(key, names[key].name)[:3]
+
     for k, pat in enumerate(pats[: ch - 11]):
         colour = mix(ui["dim"], ui["title"], pat.strength)
-        label = "-".join(short_name(b, names[b].name)[:3] for b in pat.bodies)
+        label = "-".join(short(b) for b in pat.bodies)
         cv.put(x + 2, y + 11 + k, label[: cw - 12], colour, bg, pat.strength > 0.5)
         span = f"{pat.span / v.orb_scale:5.2f}°"
         cv.put(x + cw - 2 - len(span), y + 11 + k, span, colour, bg, pat.strength > 0.5)

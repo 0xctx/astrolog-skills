@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import typer
 from rich.console import Console
 from rich.markup import escape
@@ -76,6 +78,10 @@ def register(app: typer.Typer) -> None:
         midpoints: str = typer.Option(
             None, "--midpoints", help="Midpoint lists by the old or new method (default: the pack's)."
         ),
+        transits: str = typer.Option(
+            None, "--transits", help="Add transits from a date (YYYY-MM-DD) or 'now': a ring and a timeline."
+        ),
+        days: int = typer.Option(180, "--days", help="With --transits: how many days the timeline covers (≤730)."),
     ) -> None:
         from pathlib import Path
 
@@ -115,6 +121,8 @@ def register(app: typer.Typer) -> None:
             attach_notes(data["study"], reading_notes.load(notes_file))
         if data["study"] is not None and not citations():
             data["study"] = without_citations(data["study"])
+        if transits:
+            data["transits"] = transit_payload(model, prof, tradition, transits, days)
         data["reading"] = _reading(reading, model, tradition.name)
         data["reading_on"] = reading_notes.reading_date(notes_file) if notes_file.is_file() else None
         target = Path(out_).expanduser() if out_ else html.export_path(model, chosen)
@@ -159,3 +167,20 @@ def register(app: typer.Typer) -> None:
             "reading_notes": len(written),
         }
         out(ctx).emit(data_out, render)
+
+
+def transit_payload(natal: Any, prof: Any, tradition: Any, when: str, days: int) -> dict[str, Any]:
+    """The transit timeline (the chart's and the pack's bodies and aspects) and each transiting body's daily
+    longitude, so the page can put the transiting planets on any harmonic's wheel for any day."""
+    from astrolog_skills.analysis import transit_timeline as tt
+    from astrolog_skills.cli.commands.transits import transit_moment
+
+    if not 1 <= days <= 730:
+        raise AstroError("--days must be between 1 and 730.")
+    moment = transit_moment(when, natal)
+    assert moment.utc is not None
+    start = moment.utc.replace(hour=12, minute=0, second=0, microsecond=0)
+    line = tt.build(natal, prof, tradition.method, start, days, moment.lat, moment.lon, tt.Selection())
+    keys = [p.key for p in line.skies[0].points if p.key not in tt.NEVER]
+    lons = {k: [round(next(p.lon for p in s.points if p.key == k), 4) for s in line.skies] for k in keys}
+    return {**line.to_dict(), "bodies": lons}

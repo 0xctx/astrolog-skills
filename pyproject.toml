@@ -1,6 +1,6 @@
 [project]
 name = "astrolog-skills"
-version = "0.1.0"
+version = "0.1.1"
 description = "Professional astrology in plain English on your own Astrolog — a Claude Code plugin toolkit."
 readme = "README.md"
 license = "MIT"

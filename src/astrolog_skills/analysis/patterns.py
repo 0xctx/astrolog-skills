@@ -76,6 +76,12 @@ def find_patterns(
     return sorted(patterns, key=lambda p: (-p.size, p.span))
 
 
+def group_score(patterns: list[Pattern]) -> float:
+    """Planet groups as one number: each group's strength × the planet pairs it holds (a 4-planet group has 6, a
+    3-planet group 3), so bigger and tighter groups weigh more."""
+    return sum(p.strength * p.size * (p.size - 1) / 2 for p in patterns)
+
+
 def lower_harmonic_pairs(natal: dict[str, float], h: int, orb: float) -> set[frozenset[str]]:
     """Pairs conjunct in H only because they are already conjunct in a lower harmonic d that divides H
     (e.g. a quintile — H5 — reappears as a conjunction in H10). An "exclude lower harmonics" option."""

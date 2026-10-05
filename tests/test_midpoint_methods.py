@@ -18,6 +18,7 @@ from astrolog_skills.packs import loader
 from tests.conftest import run_cli
 
 VIB = loader.load("vibrational").method
+EIN_ADD = ("chart", "add", "Ein", "--date", "1879-03-14", "--time", "11:30", "--tz", "LMT", "--at", "48N24 10E00")
 
 
 def chart(**lons: float) -> ChartModel:
@@ -187,3 +188,60 @@ def test_the_sweep_measures_a_chart_as_the_single_chart_tool_does() -> None:
     for h in r.harmonics:
         assert new[0, h.harmonic] == pytest.approx(h.new, abs=2e-3), h.harmonic
         assert old[0, h.harmonic] == pytest.approx(h.old, abs=2e-3), h.harmonic
+
+
+def test_the_new_method_reaches_up_to_360_over_the_orb() -> None:
+    from astrolog_skills.render.views.strongest import ceiling_note
+
+    # every angle is within 3° (in the harmonic chart) of a conjunction by H120: no structure is left for H121+
+    new, _ = chance.sums(np.random.default_rng(3).uniform(0, 360, (20, 8)), 180, 3.0, 1.5)
+    assert new[:, 121:].sum() == 0 and new[:, 100:121].sum() > 0
+    assert ceiling_note(3.0, 120) is None and "H120" in (ceiling_note(3.0, 360) or "")
+    assert "H90" in (ceiling_note(4.0, 180) or "")
+
+
+def test_long_ranges_are_grouped_in_the_terminal(fake_astrolog: Path) -> None:
+    assert (
+        run_cli(
+            "chart", "add", "Ein", "--date", "1879-03-14", "--time", "11:30", "--tz", "LMT", "--at", "48N24 10E00"
+        ).returncode
+        == 0
+    )
+    shown = run_cli("harmonics", "--chart", "Ein", "--harmonics", "1-360", "--by", "new")
+    assert shown.returncode == 0 and "360" in shown.stdout and "finds its own harmonic by H120" in shown.stdout
+
+
+def test_planet_groups_score_any_harmonic() -> None:
+    from astrolog_skills.analysis.patterns import find_patterns, group_score
+
+    three = find_patterns({"a": 0.0, "b": 4.0, "c": 8.0}, 16.0)
+    four = find_patterns({"a": 0.0, "b": 4.0, "c": 8.0, "d": 6.0}, 16.0)
+    assert group_score(four) > group_score(three) * 1.9  # 6 pairs against 3, nearly as tight
+    mean, sd = chance.group_baseline(10, 16.0, 3)
+    assert (mean, sd) == chance.group_baseline(10, 16.0, 3) and 0 < mean < 2 and sd > 0
+    # four planets 1/342 of the circle apart, joined only in H342: far beyond the new method's H120
+    step = 360 / 342
+    c = chart(sun=10.0, mercury=10.0 + step, venus=10.0 + 2 * step, mars=10.0 + 3 * step, jupiter=200.0, saturn=77.0)
+    r = rank_harmonics(c, VIB, list(range(1, 361)))
+    assert r.default_by() == "groups" and r.ranked("groups")[0].harmonic == 342
+    top = r.ranked("groups")[0]
+    assert top.group_list[0]["bodies"] == ["sun", "mercury", "venus", "mars"] and top.z_groups > 2
+    assert rank_harmonics(c, VIB, list(range(1, 33))).default_by() == "new"
+
+
+def test_group_flags() -> None:
+    from astrolog_skills.analysis.midpoints import _group
+    from astrolog_skills.analysis.patterns import Pattern
+
+    moon = _group(Pattern(["moon", "mars", "jupiter"], 6.0, 0.62), 153, 16.0, 13.0)
+    assert moon["exact_time"] and moon["moon_minutes"] == round(10 / 153 / 13 * 1440)
+    outer = _group(Pattern(["saturn", "neptune", "pluto"], 9.0, 0.4), 299, 16.0, 13.0)
+    assert outer["generational"] and not outer["exact_time"]
+
+
+def test_cli_ranks_by_groups(fake_astrolog: Path) -> None:
+    assert run_cli(*EIN_ADD).returncode == 0
+    data = ok("harmonics", "--chart", "Ein", "--harmonics", "1-200")
+    assert data["by"] == "groups" and data["default_by"] == "groups" and "z_groups" in data["harmonics"][0]
+    shown = run_cli("harmonics", "--chart", "Ein", "--harmonics", "1-12", "--by", "groups")
+    assert shown.returncode == 0 and "planet groups" in shown.stdout

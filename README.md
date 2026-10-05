@@ -8,8 +8,6 @@ Charts, transits, harmonic charts and midpoint structures, research across thous
 baseline, terminal and interactive HTML charts, traditions built from the books and courses you own, and readings in
 plain language — local, free and editable down to every orb and meaning.
 
-<a href="docs/images/html-harmonics.png"><img src="docs/images/html-harmonics.png" width="760" alt="Interactive HTML chart: the wheel, aspects and midpoints by planet, and the strongest harmonics under the slider"></a>
-
 - 🔭 **Astrolog does every calculation** — charts verified against it to ±0.001°, places from its atlas (222,694 of
   them) with historically correct time zones.
 - 🧠 **The agent reads, the toolkit computes** — every number in a reading comes from `astro`; every meaning comes from
@@ -32,8 +30,9 @@ plain language — local, free and editable down to every orb and meaning.
 | 🛠️ | "Set up astrolog skills" | checks everything, offers to install the official Astrolog 8.00, shows the sky right now |
 | 💾 | "Save my chart: 1 May 1990, 2:20 pm, Paris" | looks up Paris (coordinates, historical time zone) and saves the chart |
 | 🪐 | "Show my chart with aspects" | a colour chart in your terminal, plus a tree per planet: its aspects, then its midpoints |
-| 🎵 | "What are my strongest harmonics?" | scans a range of harmonics in your chart and ranks them by your midpoint structures — by the new or the classic method — with two-planet aspects alongside |
-| 📅 | "What's happening for me over the next three months?" | transits now and the exact dates coming up |
+| 🎵 | "What are my strongest harmonics?" | scans a range of harmonics in your chart and ranks them by your midpoint structures (new or classic method) or planet groups — up to H360 and beyond |
+| 📅 | "What's happening for me over the next three months?" | transits now, and a timeline of the coming ones with their exact dates |
+| 🌀 | "Which harmonics are my transits activating this year?" | a timeline of every transit to your planets and midpoints, and the harmonic patterns transits complete — one click to that harmonic transit chart |
 | ✍️ | "Write me a psychological reading" / "…read it vibrationally" | a grounded reading in that tradition, saved as Markdown |
 | 🌐 | "Make me an HTML chart I can send to a client" | one offline file with a real wheel, a harmonic slider and the strongest harmonics |
 | 🏛️ | "Read my chart the Hellenistic way" | your life area by area, with the next two years' timing — and a study page that explains every finding |
@@ -62,6 +61,11 @@ All for Einstein's chart — click any picture for the full size.
 <tr>
 <td align="center" valign="top"><a href="docs/images/terminal-doctrine.png"><img src="docs/images/thumbs/terminal-doctrine.png" alt="Hellenistic doctrine: sect, condition, bonification and maltreatment"></a><br><sub><b>Hellenistic doctrine</b><br>each planet's condition, and who helps or harms it</sub></td>
 <td align="center" valign="top"><a href="docs/images/terminal-timelords.png"><img src="docs/images/thumbs/terminal-timelords.png" alt="Time lords on a date: profections, zodiacal releasing, the next peaks, and transits"></a><br><sub><b>Time lords</b><br>profections, releasing, peaks and transits on a date</sub></td>
+<td align="center" valign="top"><a href="docs/images/terminal-transits.png"><img src="docs/images/thumbs/terminal-transits.png" alt="Transit timeline: a bar per transit to natal planets and midpoints, grouped by transiting planet, and the harmonic patterns transits form"></a><br><sub><b>Transit timeline</b><br>every transit, brightest on its exact days, then harmonic patterns</sub></td>
+</tr>
+<tr>
+<td align="center" valign="top"><a href="docs/images/terminal-harmonic-transit-chart.png"><img src="docs/images/thumbs/terminal-harmonic-transit-chart.png" alt="Harmonic transit chart: natal and transiting planets in the H9 chart, the group they form, and that chart's transits"></a><br><sub><b>Harmonic transit chart</b><br>natal and transiting planets × H, the groups they form</sub></td>
+<td></td>
 <td></td>
 </tr>
 </table>
@@ -72,9 +76,12 @@ All for Einstein's chart — click any picture for the full size.
 
 <table>
 <tr>
-<td width="33%" align="center" valign="top"><a href="docs/images/html-natal.png"><img src="docs/images/thumbs/html-natal.png" alt="Natal chart page: the wheel with aspects and midpoints by planet"></a><br><sub><b>Natal chart</b><br>the wheel, with aspects and midpoints per planet</sub></td>
-<td width="33%" align="center" valign="top"><a href="docs/images/html-harmonics.png"><img src="docs/images/thumbs/html-harmonics.png" alt="Harmonic chart page at H17: the harmonic slider, the midpoint method switch and the strongest harmonics"></a><br><sub><b>Harmonics</b><br>a slider through the harmonic charts, the strongest ranked below it</sub></td>
-<td width="33%" align="center" valign="top"><a href="docs/images/study-page.png"><img src="docs/images/thumbs/study-page.png" alt="Hellenistic study page: wheel, aspects by sign, life timeline and each life topic with its testimonies"></a><br><sub><b>🏛️ Hellenistic study</b><br>the reading's evidence: wheel, life timeline, topics — plus planets, lots, places and time lords in tabs</sub></td>
+<td width="50%" align="center" valign="top"><a href="docs/images/html-natal.png"><img src="docs/images/thumbs/html-natal.png" alt="Natal chart page: the wheel with aspects and midpoints by planet"></a><br><sub><b>Natal chart</b><br>the wheel, with aspects and midpoints per planet</sub></td>
+<td width="50%" align="center" valign="top"><a href="docs/images/html-harmonics.png"><img src="docs/images/thumbs/html-harmonics.png" alt="Harmonic chart page at H17: the harmonic slider, the midpoint method switch and the strongest harmonics"></a><br><sub><b>Harmonics</b><br>a slider through the harmonic charts, the strongest ranked below it</sub></td>
+</tr>
+<tr>
+<td align="center" valign="top"><a href="docs/images/html-transits.png"><img src="docs/images/thumbs/html-transits.png" alt="Transits page: the harmonic transit chart on the wheel and a timeline of every transit"></a><br><sub><b>Transits</b><br>a transit timeline with harmonic patterns; click one to see its harmonic transit chart</sub></td>
+<td align="center" valign="top"><a href="docs/images/study-page.png"><img src="docs/images/thumbs/study-page.png" alt="Hellenistic study page: wheel, aspects by sign, life timeline and each life topic with its testimonies"></a><br><sub><b>🏛️ Hellenistic study</b><br>the reading's evidence: wheel, life timeline, topics — plus planets, lots, places and time lords in tabs</sub></td>
 </tr>
 </table>
 
@@ -215,18 +222,29 @@ sevenths, ninths, seventeenths — show up as planets coming together. Two kinds
 | **Two-planet aspects** | planets close together in a harmonic chart (the vibrational pack's pair score) |
 | **Midpoint structures, classic method** | a planet on the midpoint of two others, with the midpoint taken inside the harmonic chart |
 | **Midpoint structures, newly proposed method** ([video](https://www.youtube.com/watch?v=qKB9QV43X_E)) | the angle to the midpoint measured in the birth chart and multiplied, so each structure has one strength and one harmonic of its own — e.g. "the Moon is 1/18 of the circle from the Sun/Saturn midpoint: 18th harmonic, 0.80" |
+| **Planet groups** | 3 or more planets all together in a harmonic chart — the rare 4-planet groups of the high harmonics (H100–H360) |
 
 - 🏆 `astro harmonics --chart Me` scans a range of harmonics in **your chart only** (H1–32 unless you pick others)
   and ranks them by the strength of your midpoint structures in each. The score is shown as σ: how much stronger
   than a typical chart in that same harmonic (2σ or more is rare), so harmonics are compared fairly with each other.
   Comparing groups of people is a separate tool: [research](#-research-what-a-group-has-in-common).
 - ⚖️ Choose the scoring: `--by new` (the newly proposed method, the vibrational pack's default), `--by old` (the
-  classic method) or `--by aspects` (two-planet aspects only) — or just ask, e.g. *"rank my harmonics by the old
-  method"*. The other measures are always shown alongside.
+  classic method), `--by groups` (planet groups) or `--by aspects` (two-planet aspects only) — or just ask, e.g.
+  *"rank my harmonics by the old method"*. The other measures are always shown alongside.
+- 🔭 **High harmonics:** the new method counts each structure once, at the lowest harmonic where it's within its 3°
+  orb, and every angle is that close to a conjunction somewhere by H120 (360 ÷ 3) — so a range beyond that
+  (`--harmonics 1-360`) ranks by planet groups instead. Each group is flagged when it holds the Moon and needs an
+  exact birth time, or is mostly outer planets and so shared by a whole generation.
 - 🔍 `--harmonic 17` shows one in detail; `--harmonics 1,5,7,18` picks your own range.
-- 🌐 The HTML chart shows the same ranking as bars under its harmonic slider, with a switch between the two midpoint
-  methods (the birth chart, H1, uses the classic one: there they measure the same angle).
-- 🧪 The new method still awaits controlled research — which the research tool below can run.
+- 🌀 **Transits and harmonics:** `astro transits --chart Me --days 180` draws a timeline of every transit to your
+  natal planets, angles and midpoints — with the tradition's own bodies, aspects and orbs — grouped by transiting
+  planet, each bar brightest on its exact days (retrograde passes included). The aspect says which harmonic it
+  belongs to: a septile is a 7th-harmonic transit. Below it, the **harmonic patterns** transits complete, scored 0–1
+  like any pattern (transiting Saturn joining a natal Venus–Mars septile is an H7 pattern), each with the command for
+  its **harmonic transit chart**: `astro view --chart Me --harmonic 7 --transits DATE`, natal and transiting planets
+  both multiplied by 7. Narrow it with `--transiting saturn,ceres`, `--aspects h7,h9` or `--no-midpoints`; add
+  asteroids with `--points +ceres,+pallas`. `astro export html … --transits DATE` puts the timeline and the harmonic
+  transit chart on one page.
 
 ## 🔬 Research: what a group has in common
 
@@ -300,10 +318,10 @@ astro chart list | show NAME | rm NAME
 astro view --chart NAME [--show chart,aspects,grid,balance,patterns,positions|all] [--harmonic 7] [--transits now] [--midpoints new|old]
 astro cast --chart NAME | --date … --time … --place "…" | --now
 astro aspects --chart NAME [--harmonic H] | astro patterns --chart NAME --pack vibrational [--range 1-32]
-astro harmonics --chart NAME [--harmonics 1-32 | 1,5,7,18] [--by new|old|aspects] [--harmonic 17] [--orb-base 4]
-astro transits --chart NAME [--on 2027-03-01] [--days 90]
+astro harmonics --chart NAME [--harmonics 1-32 | 1,5,7,18] [--by new|old|groups|aspects] [--harmonic 17] [--orb-base 4]
+astro transits --chart NAME [--on 2027-03-01] [--days 180] [--transiting saturn,ceres] [--natal sun,asc] [--aspects h7,septile] [--no-midpoints] [--harmonics 1-32]
 astro report-data --chart NAME [--pack vibrational --pack psychological] [--on DATE]
-astro export html --chart NAME [--harmonic 7 | --harmonics 1-12 | --harmonics 1,5,7,11] [--midpoints new|old] [--out file.html]
+astro export html --chart NAME [--harmonic 7 | --harmonics 1-12 | --harmonics 1,5,7,11] [--midpoints new|old] [--transits DATE --days 180] [--out file.html]
 astro data fetch-sample | astro data categories --grep music
 astro set create NAME --adb FILE|--csv FILE|--chart A --chart B [--rating AA,A] [--category "Vocation : …"]
 astro set list | show NAME | cast NAME

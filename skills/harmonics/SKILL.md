@@ -18,14 +18,23 @@ The method, as encoded in the `vibrational` pack (`astro --json packs show vibra
 - **Strongest harmonics**: midpoint strength per harmonic, each structure counted once at its own vibration, measured
   in σ: how much stronger than a typical chart in that same harmonic (2σ or more is rare). It scans the user's chart
   only — "typical" is a fixed per-harmonic yardstick, not other people; comparing groups is the research skill.
-  Ranking: `--by new` (pack default), `--by old` or `--by aspects` — use what the user asks for, and say which one
-  ranked the list. Two-planet aspects (the pack's pair score) alongside.
+  Ranking: `--by new`, `--by old`, `--by groups` or `--by aspects` — use what the user asks for, and say which one
+  ranked the list (`by`). Two-planet aspects (the pack's pair score) alongside.
+- **Planet groups** (`--by groups`, `z_groups`, `group_list`): 3+ planets all within the pack's pattern orb in the
+  harmonic chart, each group's strength × its planet pairs, against random charts (the same yardstick in every
+  harmonic). This is how high harmonics are scored: the rare 4-planet groups in H100–H360.
+  - Above 360 ÷ the new method's orb (H120 at 3°) the new method finds nothing, by arithmetic: every angle is within
+    the orb of a conjunction in some lower harmonic, so every structure already has its own harmonic. A range beyond
+    that ranks by groups by default (`default_by`); say why if asked.
+  - Read each group's flags: `exact_time` (it holds the Moon, and the birth time must be right within
+    `moon_minutes` — say so; a rounded time can't support it) and `generational` (mostly Uranus–Pluto: shared by
+    everyone born that year or decade — what's personal is the faster planets that join it).
 - Harmonics 1–32 are well understood; up to 180 are supported. Meanings are in the pack's `meanings.md`.
 - Open questions and assumptions: the pack's `REVIEW.md` — mention them when they affect an answer.
 
 ## Commands (read `--json` yourself)
 
-- Strongest harmonics: `astro --json harmonics --chart NAME [--harmonics 1-32|1,5,7,18] [--by new|old|aspects]
+- Strongest harmonics: `astro --json harmonics --chart NAME [--harmonics 1-32|1,5,7,18] [--by new|old|groups|aspects]
   [--orb-base 4]` → `harmonics` (each with `z_new`, `z_old`, `new`, `old`, chance, `aspects`, top structures),
   `ranked`, and `structures` (the strongest, each at its own vibration with the old method's strength alongside).
 - One harmonic in detail: `astro --json harmonics --chart NAME --harmonic 17` → its aspects and its midpoints by

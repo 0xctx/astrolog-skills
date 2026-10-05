@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "astrolog-skills",
   "displayName": "Astrolog Skills",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Professional astrology in plain English on your own Astrolog: charts, transits, harmonics and midpoint structures, research at scale, traditions built from your own books, terminal and HTML views.",
   "author": { "name": "astrolog-skills contributors" },
   "license": "MIT",

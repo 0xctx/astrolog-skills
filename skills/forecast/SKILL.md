@@ -1,22 +1,33 @@
 ---
 name: forecast
-description: Transits, time lords and forecasting with astrolog-skills — what the current sky (or any date) activates in a natal chart, when transits become exact, and traditional timing (annual profections, lords of the year, the sect light's triplicity lords, zodiacal releasing with peaks and loosing of the bond). Use when the user asks what's happening now, about a date or period, upcoming transits, "when will Saturn…", their profection year, releasing periods, timing, or a forecast.
+description: Transits, transit timelines, harmonic transit charts and patterns, time lords and forecasting with astrolog-skills — what the current sky (or any date) activates in a natal chart, a timeline of every transit to natal planets and midpoints with the harmonic each aspect belongs to, when transits become exact, and traditional timing (annual profections, lords of the year, the sect light's triplicity lords, zodiacal releasing with peaks and loosing of the bond). Use when the user asks what's happening now, about a date or period, upcoming transits, "when will Saturn…", their profection year, releasing periods, timing, or a forecast.
 ---
 
 # Forecasts (transits)
 
 `astro --json transits --chart NAME [--on YYYY-MM-DD|now] [--on-time HH:MM] [--days N] [--pack P]`
+`  [--transiting saturn,ceres] [--natal sun,moon,asc] [--aspects septile,h9] [--no-midpoints] [--harmonics 1-32]`
 
-- `transits`: every transiting body to every natal point and angle within the pack's **transit orbs** (default 2° for
-  conjunction/opposition/trine/square, 1° for the rest; a pack can set its own under `[transits]`), with `applying`
-  (building) or separating (fading). Tightest first.
-- `window` (with `--days N`, up to 730): for each transit, the **exact date** in the window — or, if it perfected just
-  before or after, the dates it is in orb. One fast Astrolog run covers all days. The Moon is left out of the window
-  (it moves ~13° a day); it appears in the single-date list.
-- Transits are cast for your usual location (`astro config set location …`) or the birthplace; they barely change with
-  place except the Moon and angles.
-- Show the user: `! astro view --chart NAME --transits 2027-03-01` (transiting planets appear in blue in the sign
-  boxes, with the transits table below) or `--transits now`.
+- `transits`: every transiting body to every natal point and angle on the date, within the pack's **transit orbs**
+  (a pack sets them under `[transits]`), with `applying` (building) or separating. Tightest first.
+- `timeline` (with `--days N`, up to 730) — a transit timeline, Sirius style:
+  - `passages`: each stretch a transit is in orb — to natal planets and angles (the pack's transit aspects and orbs)
+    and to natal midpoints (the pack's midpoint aspects and orbs) — with `enters`, `leaves`, **every** `exact` date
+    (a retrograde transit has several) and the aspect's `harmonic` (septile 7, novile 9, square 4…). Slowest
+    transiting body first, then planets before midpoints, then by date. `passages_total` counts them all; `--limit`
+    (default 400, 0 = all) caps the list.
+  - `active`: how many transits each harmonic has in orb on the first day — the harmonics being activated.
+  - `patterns`: harmonic transit patterns — a transiting body joining two or more natal bodies all within the pack's
+    pattern orb in harmonic chart H (e.g. transiting Saturn on a natal Venus–Mars septile: an H7 pattern), with dates
+    and the tightest day; strongest (most bodies, tightest) first. Searched over the pack's harmonic range unless
+    `--harmonics` names others.
+  - Defaults are the chart's and the pack's: its bodies (add asteroids with `--points +ceres,+pallas,+juno,+vesta`),
+    transit aspects, midpoint rules and pattern rules. The Moon doesn't transit in the timeline (daily steps).
+- Transits are cast for your usual location (`astro config set location …`) or the birthplace.
+- Show the user: `! astro transits --chart NAME --days 90` (the timeline: a bar per transit, ◆ on each exact day,
+  under a header per transiting planet, then the harmonic patterns with their strength), and a harmonic transit chart on a pattern's day:
+  `! astro view --chart NAME --harmonic 7 --transits DATE` (natal and transiting planets both × 7, transits in blue,
+  with that chart's transits below). An HTML page with both: the export skill (`--transits DATE --days N`).
 
 ## Reading a forecast
 
@@ -24,7 +35,8 @@ description: Transits, time lords and forecasting with astrolog-skills — what 
    Then the faster ones as triggers (Sun, Mars, Mercury, Venus) near their exact dates.
 2. Interpret with the pack's `meanings.md` (transiting planet's drive × natal point × aspect), following its
    `process.md`. For the vibrational pack, its two steps: find the natal harmonic patterns that fit the question,
-   then the transits touching them (full harmonic-transit timelines are a later feature).
+   then the transits touching them: the timeline's rows in those harmonics (`--aspects h7`) and its harmonic
+   patterns, each looked at in its harmonic transit chart.
 3. Give dates and orbs; applying = building, separating = integrating.
 4. Tendencies and timing windows, never certainties; no medical, legal, financial or death predictions.
 

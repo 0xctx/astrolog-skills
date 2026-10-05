@@ -52,6 +52,7 @@ class Method:
     pattern_min_size: int = 3
     pattern_strong_size: int = 4
     pattern_bodies: tuple[str, ...] = TEN_PLANETS
+    reads_patterns: bool = True  # False for a pack without a [patterns] section: no pattern search in its readings
     exclude_lower_harmonics: bool = False
     weight_rules: tuple[WeightRule, ...] = ()
     weight_default: float = 1.0
@@ -195,6 +196,7 @@ def parse(raw: dict[str, Any], where: str) -> Method:
         pattern_min_size=int(_num(where, "patterns.min_size", pat_t.get("min_size", 3), 2, 12)),
         pattern_strong_size=int(_num(where, "patterns.strong_size", pat_t.get("strong_size", 4), 2, 12)),
         pattern_bodies=bodies,
+        reads_patterns="patterns" in raw,
         exclude_lower_harmonics=bool(harm_t.get("exclude_lower", False)),
         weight_rules=tuple(rules),
         weight_default=_num(where, "weights.default", w_t.get("default", 1.0), 0, 100),

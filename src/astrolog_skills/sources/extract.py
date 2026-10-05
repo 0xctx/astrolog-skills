@@ -9,11 +9,11 @@ from __future__ import annotations
 import re
 import shutil
 import subprocess
-import sys
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
+from astrolog_skills import packages
 from astrolog_skills.errors import AstroError
 
 TEXT_SUFFIXES = (".txt", ".md", ".text", ".srt", ".vtt")
@@ -31,44 +31,24 @@ _BACK_HEADINGS = re.compile(r"^\s*(bibliography|index|glossary|notes|references|
 
 def poppler_hint(os_release: str | None = None) -> str:
     """The one command that installs poppler (pdftotext, pdftoppm) on this OS."""
-    if sys.platform == "darwin":
-        return "brew install poppler"
-    if sys.platform == "win32":
-        return "install poppler for Windows and put its bin folder on PATH"
-    text = os_release
-    if text is None:
-        try:
-            text = Path("/etc/os-release").read_text()
-        except OSError:
-            text = ""
-    ids = " ".join(
-        line.split("=", 1)[1].strip().strip('"').lower()
-        for line in text.splitlines()
-        if line.startswith(("ID=", "ID_LIKE="))
+    return packages.hint(
+        {"*": "poppler-utils", "pacman": "poppler", "zypper": "poppler-tools"},
+        mac="brew install poppler",
+        windows="install poppler for Windows and put its bin folder on PATH",
+        otherwise="install poppler (it provides pdftotext and pdftoppm) with your package manager",
+        os_release=os_release,
     )
-    if any(k in ids for k in ("fedora", "rhel", "centos")):
-        return "sudo dnf install poppler-utils"
-    if any(k in ids for k in ("debian", "ubuntu")):
-        return "sudo apt install poppler-utils"
-    if "arch" in ids:
-        return "sudo pacman -S poppler"
-    if any(k in ids for k in ("suse", "opensuse")):
-        return "sudo zypper install poppler-tools"
-    if "alpine" in ids:
-        return "sudo apk add poppler-utils"
-    return "install poppler (it provides pdftotext and pdftoppm) with your package manager"
 
 
-def ocr_hint() -> str:
+def ocr_hint(os_release: str | None = None) -> str:
     """The command that installs ocrmypdf (with tesseract) on this OS."""
-    hint = poppler_hint()
-    if "brew" in hint:
-        return "brew install ocrmypdf"
-    for manager in ("dnf", "apt", "pacman -S", "zypper", "apk"):
-        if manager.split()[0] in hint:
-            verb = "add" if manager == "apk" else "install" if manager != "pacman -S" else ""
-            return f"sudo {manager} {verb} ocrmypdf".replace("  ", " ")
-    return "install ocrmypdf (it brings tesseract) with your package manager, or: pip install ocrmypdf"
+    return packages.hint(
+        {"*": "ocrmypdf"},
+        mac="brew install ocrmypdf",
+        windows="pip install ocrmypdf (and install Tesseract for Windows)",
+        otherwise="install ocrmypdf (it brings tesseract) with your package manager, or: pip install ocrmypdf",
+        os_release=os_release,
+    )
 
 
 def ocr(source: Path, target: Path) -> None:

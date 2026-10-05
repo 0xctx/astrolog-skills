@@ -20,10 +20,10 @@ from typing import Any
 
 from astrolog_skills.analysis.aspects import ANGLE_KEYS, separation
 from astrolog_skills.analysis.aspects_registry import BY_KEY, AspectType
-from astrolog_skills.analysis.chance import baseline
+from astrolog_skills.analysis.chance import baseline, group_baseline
 from astrolog_skills.analysis.harmonics import harmonic_chart
 from astrolog_skills.analysis.method import Method
-from astrolog_skills.analysis.patterns import score_harmonic
+from astrolog_skills.analysis.patterns import Pattern, group_score, score_harmonic
 from astrolog_skills.engine.model import ChartModel
 
 SKIP = ("south_node",)  # always opposite the North Node: its midpoints only repeat the North Node's
@@ -178,8 +178,12 @@ class HarmonicStrength:
     z_new: float  # how far above a random chart, in standard deviations
     z_old: float
     aspects: float  # the pack's two-planet score in this harmonic (score 2)
+    groups: float = 0.0  # planet groups: 3+ planets all within the pattern orb in this harmonic chart (group_score)
+    chance_groups: float = 0.0
+    z_groups: float = 0.0
     new_structures: list[Structure] = field(default_factory=list)
     old_structures: list[Structure] = field(default_factory=list)
+    group_list: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -199,10 +203,16 @@ class Ranking:
             "structures": self.structures,
             "bodies": self.bodies,
             "orbs": {"new": self.new_orb, "old": self.old_orb},
+            "default_by": self.default_by(),
         }
 
+    def default_by(self) -> str:
+        """The new method up to its ceiling (360 ÷ its orb: every structure has its own harmonic by then); planet groups
+        for a range beyond it, where the new method has nothing left to count."""
+        return "groups" if max(h.harmonic for h in self.harmonics) > 360 // self.new_orb else "new"
+
     def ranked(self, by: str = "new") -> list[HarmonicStrength]:
-        field_ = {"new": "z_new", "old": "z_old", "aspects": "aspects"}[by]
+        field_ = {"new": "z_new", "old": "z_old", "aspects": "aspects", "groups": "z_groups"}[by]
         return sorted(self.harmonics, key=lambda h: (-float(getattr(h, field_)), h.harmonic))
 
 
@@ -220,6 +230,8 @@ def rank_harmonics(
     conj, old_orb = new_orb or method.midpoint_new_orb, method.midpoint_orb
     highest = max(harmonics)
     chance = baseline(len(bodies), highest, conj, old_orb)
+    g_mean, g_sd = group_baseline(len(bodies), method.pattern_orb, method.pattern_min_size)
+    moon = next((p.speed for p in chart.points if p.key == "moon"), None)
     trios = [(f, a, b) for f in bodies for a, b in combinations([x for x in bodies if x != f], 2)]
     by_vibration: dict[int, list[Structure]] = {}
     for f, a, b in trios:
@@ -240,6 +252,8 @@ def rank_harmonics(
         news = sorted(by_vibration.get(n, []), key=lambda s: -s.strength)
         c = chance[n]
         new_sum, old_sum = sum(s.strength for s in news), sum(s.strength for s in olds)
+        scored = score_harmonic(natal, n, method)
+        g = group_score(scored.patterns)
         rows.append(
             HarmonicStrength(
                 n,
@@ -249,9 +263,13 @@ def rank_harmonics(
                 c.old_mean,
                 round((new_sum - c.new_mean) / c.new_sd, 1) if c.new_sd else 0.0,
                 round((old_sum - c.old_mean) / c.old_sd, 1) if c.old_sd else 0.0,
-                round(score_harmonic(natal, n, method).score2, 3),
+                round(scored.score2, 3),
+                round(g, 3),
+                g_mean,
+                round((g - g_mean) / g_sd, 1) if g_sd else 0.0,
                 news[:top],
                 olds[:top],
+                [_group(p, n, method.pattern_orb, moon) for p in scored.patterns[:top]],
             )
         )
     shown = sorted((s for n in harmonics for s in by_vibration.get(n, [])), key=lambda s: (-s.strength, s.harmonic))
@@ -263,6 +281,27 @@ def rank_harmonics(
         for s in shown[:20]
     ]
     return Ranking(rows, structures, bodies, conj, old_orb)
+
+
+OUTER = ("uranus", "neptune", "pluto")
+
+
+def _group(p: Pattern, n: int, orb: float, moon_speed: float | None) -> dict[str, Any]:
+    """A planet group with what a reader needs to weigh it: how exact the birth time must be when the Moon is in it
+    (the minutes before the Moon would leave the group), and whether it is mostly generational (outer planets)."""
+    minutes = None
+    if "moon" in p.bodies and moon_speed:
+        minutes = round((orb - p.span) / n / abs(moon_speed) * 1440)
+    personal = [b for b in p.bodies if b not in OUTER]
+    return {
+        "bodies": p.bodies,
+        "size": p.size,
+        "span": p.span,
+        "strength": p.strength,
+        "moon_minutes": minutes,  # the birth time must be right within about this many minutes
+        "exact_time": minutes is not None and minutes < 30,
+        "generational": len(personal) <= 1,
+    }
 
 
 def _halves(n: int) -> list[int]:

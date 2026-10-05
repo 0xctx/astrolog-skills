@@ -2,6 +2,7 @@
   --good: #7fdc95; --bad: #ff7a85;
   --page: #0e101e; --text: #ebf0ff; --dim: #828cb4; --title: #ffe68c; --panel: #181c3a; --label: #96c8ff; --frame: #78dceb;
   --glyphs: "Segoe UI Symbol", "Noto Sans Symbols 2", "Noto Sans Symbols", "DejaVu Sans", "Apple Symbols", sans-serif;
+  --mixed: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", var(--glyphs);  /* text, with glyphs where the text font has none */
   --ease: cubic-bezier(.2, .7, .2, 1);
 }
 * { box-sizing: border-box; }
@@ -137,6 +138,25 @@ h2 { margin: 0 0 12px; font-size: 12px; font-weight: 600; letter-spacing: .14em;
 #tl text { font-size: 11px; fill: var(--dim); }
 #tl .seg { cursor: help; }
 #tl .seg:hover { filter: brightness(1.35); }
+#ttl { display: block; width: 100%; min-width: 760px; height: auto; }
+#ttl text { font-size: 12px; font-family: var(--mixed); fill: color-mix(in srgb, var(--text) 82%, var(--dim)); }
+#ttl text.month { font-size: 11px; fill: var(--dim); letter-spacing: .04em; }
+#ttl text.head { font-size: 13px; font-weight: 600; fill: var(--label); }
+#ttl tspan.g { font-family: var(--glyphs); }
+#ttl tspan.mid { fill: var(--dim); }
+#ttl .tl-row { cursor: pointer; }
+#ttl .tl-row:hover text, #ttl .tl-row.on text { fill: var(--title); }
+.transit-tl .chip.pat { white-space: nowrap; }
+.transit-tl .chip.pat b { color: var(--title); margin-right: 2px; }
+.transit-tl .chip.pat .g { font-family: var(--glyphs); }
+.transit-tl .chip.pat .dates { color: var(--dim); }
+.tl-chips, .tl-patterns { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0; }
+.tl-chips .lab, .tl-patterns .lab { min-width: 8em; font-size: 12px; color: var(--dim); }
+.transit-tl .chip { font: inherit; font-family: var(--mixed); font-size: 12px; padding: 3px 9px; border-radius: 999px; cursor: pointer; color: var(--text);
+  background: color-mix(in srgb, var(--frame) 16%, transparent); border: 1px solid color-mix(in srgb, var(--frame) 35%, transparent); }
+.transit-tl .chip.off { opacity: .4; text-decoration: line-through; }
+.tl-more { margin: 4px 0 0; font-size: 12px; color: var(--dim); }
+.tree .row.tr .name { color: var(--label); }
 .when { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
 .when input { flex: 1; min-width: 0; accent-color: var(--title); }
 .when output { min-width: 112px; font-weight: 600; color: var(--title); font-variant-numeric: tabular-nums; }
@@ -253,6 +273,11 @@ table.grid td.away { background: transparent; border: 1px dashed color-mix(in sr
 .bar.on span { color: var(--title); font-weight: 700; }
 .bar em { position: absolute; bottom: calc(22px + var(--v) * 78px); font: 600 10px/1 ui-sans-serif, system-ui, sans-serif; font-style: normal; color: var(--frame); white-space: nowrap; transition: bottom .5s var(--ease); }
 .bar.on em { color: var(--title); }
+.strongest.dense { max-width: none; }
+.bars.dense { gap: 0; }
+.bars.dense .bar i { border-radius: 1px 1px 0 0; }
+.bars.dense .bar span { visibility: hidden; white-space: nowrap; }
+.bars.dense .bar.lab span, .bars.dense .bar.on span { visibility: visible; }
 @keyframes rise { from { height: 4px; opacity: .3; } }
 .st-now { margin: 10px 0 2px; font-size: 13px; color: var(--text); line-height: 1.6; }
 .st-now b { color: var(--title); }

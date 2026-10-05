@@ -127,9 +127,10 @@ def register(app: typer.Typer) -> None:
                     "aspects": [a.to_dict() for a in find_aspects(model, p.method)],
                     "natal_patterns": score_harmonic(lons, 1, p.method).to_dict(),
                     "strongest_harmonics": {
-                        "by": "midpoint structures (new method) vs a typical chart per harmonic;"
-                        " old method and aspects alongside",
-                        "harmonics": [h.to_dict() for h in ranking.ranked("new")[:8]],
+                        "by": ranking.default_by(),  # new, or groups beyond the new method's reach
+                        "measures": "z_new / z_old: midpoint structures, new and old method; z_groups: planet groups;"
+                        " each vs a typical chart in that harmonic; aspects: the pack's pair score",
+                        "harmonics": [h.to_dict() for h in ranking.ranked(ranking.default_by())[:8]],
                         "structures": ranking.structures[:10],
                     },
                     "notes_path": str(notes_path(model, p.name)),

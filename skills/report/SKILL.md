@@ -13,9 +13,10 @@ applied to the toolkit's exact data. Packs: `astro --json packs list` (the profi
 1. **Chart.** Use a saved chart (`--chart NAME`) or birth data; if new, save it first with the `chart` skill.
 2. **Data.** `astro --json report-data --chart NAME [--pack P] [--pack Q]` — repeat `--pack` to blend traditions.
    It returns the chart (positions, houses, speeds), balance, and per pack: aspects with orbs/strength/applying,
-   natal patterns, strongest harmonics (`strongest_harmonics`: midpoint structures in σ above a typical chart in that harmonic by the new
-   method, the old method and two-planet aspects alongside, and the strongest structures each at its own vibration —
-   see the harmonics skill), the pack's file paths, and `export_path`.
+   natal patterns, strongest harmonics (`strongest_harmonics`, ranked `by` the new method or — for a range beyond
+   its reach — planet groups: z_new, z_old, z_groups in σ above a typical chart in that harmonic, two-planet aspects,
+   each harmonic's structures and groups with their birth-time and generational flags, and the strongest structures
+   each at its own vibration — see the harmonics skill), the pack's file paths, and `export_path`.
 3. **Read the pack files** at the returned paths: `process.md` fully, `meanings.md` fully, and `REVIEW.md` if present
    (open questions — don't present them as settled). Follow process.md's steps and writing rules.
 4. **Write** the reading in Markdown:

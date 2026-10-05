@@ -8,7 +8,7 @@
       "name": "astrolog-skills",
       "displayName": "Astrolog Skills",
       "source": "./",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Charts, transits, harmonics and midpoint structures, research at scale, traditions built from your own books, terminal and HTML views — on your own Astrolog.",
       "category": "productivity",
       "keywords": ["astrology", "astrolog", "harmonics", "vibrational-astrology", "midpoints", "hellenistic"]

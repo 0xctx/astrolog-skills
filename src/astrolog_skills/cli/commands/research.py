@@ -71,8 +71,8 @@ def render_sweep(c: Console, result: dict[str, Any], top: int) -> None:
 def register(app: typer.Typer) -> None:
     @app.command(
         "harmonics",
-        help="Which harmonics are strongest in one chart: a scan of its harmonics ranked by midpoint structures"
-        " (--by new|old|aspects), with the other measures alongside. --harmonic H for one harmonic in detail.",
+        help="Which harmonics are strongest in one chart: a scan of its harmonics ranked by midpoint structures or"
+        " planet groups (--by new|old|groups|aspects), the other measures alongside. -H 7 for one harmonic.",
     )
     def harmonics_cmd(
         ctx: typer.Context,
@@ -86,7 +86,9 @@ def register(app: typer.Typer) -> None:
         profile: str = typer.Option(None, "--profile"),
         harmonics: str = typer.Option(None, "--harmonics", help="Harmonics: 1-32, 1,5,7,18 … (default: the pack's)."),
         harmonic: int = typer.Option(None, "--harmonic", "-H", help="One harmonic in detail."),
-        by: str = typer.Option("new", "--by", help="Rank by: new (midpoints, new method), old, or aspects."),
+        by: str = typer.Option(
+            None, "--by", help="Rank by: new or old (midpoint structures), groups (planet groups) or aspects."
+        ),
         top: int = typer.Option(8, "--top", help="How many harmonics to list."),
         orb_base: float = typer.Option(None, "--orb-base", help="New method's conjunction orb: 3 (default) or 4."),
     ) -> None:
@@ -94,8 +96,8 @@ def register(app: typer.Typer) -> None:
         from astrolog_skills.export.html import parse_harmonics
         from astrolog_skills.render.views.strongest import render_detail, render_ranking
 
-        if by not in ("new", "old", "aspects"):
-            raise AstroError(f"--by must be new, old or aspects, not '{by}'.")
+        if by is not None and by not in ("new", "old", "groups", "aspects"):
+            raise AstroError(f"--by must be new, old, groups or aspects, not '{by}'.")
         if orb_base is not None and not 1 <= orb_base <= 6:
             raise AstroError("--orb-base must be between 1 and 6 degrees (3 or 4 are the usual choices).")
         moment, _ = moment_from_options(chart=chart, date=date, time=time, place=place, tz=tz, at=at)
@@ -106,6 +108,7 @@ def register(app: typer.Typer) -> None:
         if harmonic is not None:
             chosen = sorted({*chosen, harmonic})
         ranking = rank_harmonics(model, p.method, chosen, orb_base)
+        by = by or ranking.default_by()
         data: dict[str, Any] = {"chart": model.name, "pack": p.name, "by": by, **ranking.to_dict()}
         data["ranked"] = [h.harmonic for h in ranking.ranked(by)][:top]
         if harmonic is not None:

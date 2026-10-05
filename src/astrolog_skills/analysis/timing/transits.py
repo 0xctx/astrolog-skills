@@ -14,13 +14,10 @@ from astrolog_skills.analysis.doctrine.lots import compute_lots
 from astrolog_skills.analysis.doctrine.rules import SEVEN, Doctrine
 from astrolog_skills.analysis.doctrine.sect import above_horizon
 from astrolog_skills.analysis.timing.profections import age_on, profection
-from astrolog_skills.charts import chartlist
-from astrolog_skills.charts.records import SetRecord
-from astrolog_skills.engine.batch import batch
+from astrolog_skills.analysis.transits import daily_skies
 from astrolog_skills.engine.model import ChartModel
 from astrolog_skills.engine.profile import Profile
 from astrolog_skills.engine.zodiac import SIGNS, sign_index
-from astrolog_skills.paths import data_dir
 
 Positions = dict[str, tuple[float, float]]  # planet → (longitude, speed)
 
@@ -28,16 +25,10 @@ Positions = dict[str, tuple[float, float]]  # planet → (longitude, speed)
 def daily(profile: Profile, start: date, days: int, lat: float, lon: float) -> list[tuple[date, Positions]]:
     """The seven planets at noon UT for each day — one Astrolog batch run."""
     noon = datetime(start.year, start.month, start.day, 12)
-    records = [SetRecord(f"d{k}", f"day {k}", noon + timedelta(days=k), lat, lon) for k in range(days + 1)]
-    listing = chartlist.write(records, data_dir() / "cache" / "timing-days.as")
-    cast = {chartlist.id_of(c.name): c for c in batch(["-i", str(listing)], profile)}
     out = []
-    for k in range(days + 1):
-        chart = cast.get(f"d{k}")
-        if chart is not None:
-            out.append(
-                (start + timedelta(days=k), {p: (chart.points[p]["lon"], chart.points[p]["speed"]) for p in SEVEN})
-            )
+    for k, sky in enumerate(daily_skies(profile, noon, days, lat, lon)):
+        pts = {p.key: p for p in sky.points}
+        out.append((start + timedelta(days=k), {p: (pts[p].lon, pts[p].speed) for p in SEVEN}))
     return out
 
 

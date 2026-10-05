@@ -13,10 +13,11 @@ from astrolog_skills.engine.objects import BY_KEY as OBJECTS
 from astrolog_skills.ui import rgb
 
 BLOCKS = "▁▂▃▄▅▆▇█"
-SCORE = {"new": "z_new", "old": "z_old", "aspects": "aspects"}
+SCORE = {"new": "z_new", "old": "z_old", "groups": "z_groups", "aspects": "aspects"}
 METHOD = {
     "new": "midpoint structures, new method",
     "old": "midpoint structures, old method",
+    "groups": "planet groups (3+ planets together in the harmonic chart)",
     "aspects": "two-planet aspects",
 }
 
@@ -37,6 +38,17 @@ def _structure(s: dict[str, Any], short: bool = False) -> str:
     return f"{head} = {_name(s['a'])}/{_name(s['b'])} [bold]{s['strength']:.2f}[/]"
 
 
+def _group(g: dict[str, Any]) -> str:
+    """'Mercury–Saturn–Neptune–Pluto 0.75 · generational'."""
+    flags = []
+    if g["exact_time"]:
+        flags.append(f"needs the birth time within ~{g['moon_minutes']} min (the Moon)")
+    if g["generational"]:
+        flags.append("mostly generational (outer planets)")
+    tail = f" [{rgb('dim')}]· {' · '.join(flags)}[/]" if flags else ""
+    return f"{'–'.join(_name(b) for b in g['bodies'])} [bold]{g['strength']:.2f}[/]{tail}"
+
+
 def _dm(deg: float) -> str:
     d, m = int(deg), round((deg - int(deg)) * 60)
     if m == 60:
@@ -50,27 +62,42 @@ def _sigma(z: float) -> str:
 
 
 def _bars(c: Console, rows: list[dict[str, Any]], by: str, top: set[int]) -> None:
-    """One bar per harmonic: its score above chance (or the aspect score), the strongest ones bright."""
-    if len(rows) > 76:
-        return
-    wide = len(rows) <= 38
-    values = [max(float(r[SCORE[by]]), 0.0) for r in rows]
+    """One bar per harmonic: its score above chance (or the aspect score), the strongest ones bright. A long range
+    (more than 76) is grouped: each column shows the best harmonic of its group."""
+    per = -(-len(rows) // 76)  # harmonics per column
+    groups = [rows[k : k + per] for k in range(0, len(rows), per)]
+    best = [max(g, key=lambda r: float(r[SCORE[by]])) for g in groups]
+    wide = len(groups) <= 38
+    values = [max(float(r[SCORE[by]]), 0.0) for r in best]
     peak = max(values) or 1.0
+    every = 8 if per == 1 else 30 if len(rows) <= 240 else 60
     line, labels = "  ", "  "
     step = 2 if wide else 1
     free = 0  # the next column a label may start in, so neighbouring labels never run together
-    for i, (r, v) in enumerate(zip(rows, values, strict=True)):
+    for i, (g, r, v) in enumerate(zip(groups, best, values, strict=True)):
         block = BLOCKS[min(int(v / peak * (len(BLOCKS) - 1) + 0.5), len(BLOCKS) - 1)] if v > 0 else "·"
         colour = rgb("gold") if r["harmonic"] in top else rgb("accent") if v > 0 else rgb("dim")
         line += f"[{colour}]{block}[/]" + (" " if wide else "")
-        n = str(r["harmonic"])
+        mark = next((x["harmonic"] for x in g if x["harmonic"] in top or x["harmonic"] % every == 0), None)
+        n = str(mark if mark is not None else g[0]["harmonic"])
         col = i * step
-        wanted = r["harmonic"] in top or r["harmonic"] % 8 == 0 or i == 0
-        if wanted and col >= free:
+        if (mark is not None or i == 0) and col >= free:
             labels += " " * (col - (len(labels) - 2)) + n
             free = col + len(n) + 1
     c.print(line)
     c.print(f"[{rgb('dim')}]{labels.rstrip()}[/]")
+
+
+def ceiling_note(new_orb: float, highest: int) -> str | None:
+    """Above 360 ÷ orb the new method has nothing left: every angle is within the orb of a conjunction in some lower
+    harmonic (Dirichlet's approximation theorem), so every structure already has its own, lower, harmonic."""
+    top = int(360 // new_orb)
+    if highest <= top:
+        return None
+    return (
+        f"new method: with a {new_orb:g}° orb every structure finds its own harmonic by H{top} (360 ÷ {new_orb:g}), "
+        f"so the harmonics above it hold none — rank by --by old to compare them"
+    )
 
 
 def render_ranking(c: Console, data: dict[str, Any], chart: str, top: int) -> None:
@@ -83,18 +110,29 @@ def render_ranking(c: Console, data: dict[str, Any], chart: str, top: int) -> No
     note = "compared with a typical chart in each harmonic" if by != "aspects" else "the pack's pair score"
     c.print(f"[{rgb('dim')}]{METHOD[by]}, {note}[/]\n")
     _bars(c, rows, by, {r["harmonic"] for r in best[:3]})
+    ceiling = ceiling_note(data["orbs"]["new"], hi) if by == "new" else None
+    if ceiling:
+        c.print(f"[{rgb('dim')}]{ceiling}[/]", soft_wrap=True)
     c.print()
     for r in best:
         score = f"aspects {r['aspects']:.1f}" if by == "aspects" else _sigma(r[SCORE[by]])
-        rest = f"midpoints {r['new']:.2f} (typical {r['chance_new']:.2f}) · old {_sigma(r['z_old'])}"
-        if by == "old":
-            rest = f"midpoints {r['old']:.2f} (typical {r['chance_old']:.2f}) · new {_sigma(r['z_new'])}"
-        aspects = f" · aspects {r['aspects']:.1f}" if by != "aspects" else f" · new {_sigma(r['z_new'])}"
-        c.print(f"  [bold {rgb('gold')}]H{r['harmonic']:<3}[/] {score}  {rest}{aspects}", soft_wrap=True)
+        rest = {
+            "new": f"midpoints {r['new']:.2f} (typical {r['chance_new']:.2f}) · old {_sigma(r['z_old'])}",
+            "old": f"midpoints {r['old']:.2f} (typical {r['chance_old']:.2f}) · new {_sigma(r['z_new'])}",
+            "groups": f"groups {r['groups']:.2f} (typical {r['chance_groups']:.2f}) · new {_sigma(r['z_new'])}",
+            "aspects": f"new {_sigma(r['z_new'])}",
+        }[by]
+        others = f" · groups {_sigma(r['z_groups'])}" if by in ("new", "old") else ""
+        aspects = f" · aspects {r['aspects']:.1f}" if by != "aspects" else ""
+        c.print(f"  [bold {rgb('gold')}]H{r['harmonic']:<3}[/] {score}  {rest}{others}{aspects}", soft_wrap=True)
+        if by == "groups":
+            for g in r["group_list"]:
+                c.print(f"       {_group(g)}", soft_wrap=True)
+            continue
         structs = r["old_structures"] if by == "old" else r["new_structures"]
         if structs:
             c.print("       " + " · ".join(_structure(s) for s in structs), soft_wrap=True)
-    if data["structures"]:
+    if data["structures"] and by != "groups":
         c.print(
             f"\n[bold {rgb('water')}]STRONGEST MIDPOINT STRUCTURES[/] "
             f"[{rgb('dim')}]each at its own harmonic · natal angle to the midpoint · old method[/]"
@@ -113,7 +151,7 @@ def render_ranking(c: Console, data: dict[str, Any], chart: str, top: int) -> No
     c.print(
         f"\n[{rgb('dim')}]σ = how much stronger than a typical chart in that harmonic; 2σ or more is rare. "
         f"One harmonic: astro harmonics --chart NAME --harmonic {best[0]['harmonic'] if best else 1}"
-        f" · rank by --by new|old|aspects[/]",
+        f" · rank by --by new|old|groups|aspects[/]",
         soft_wrap=True,
     )
 

@@ -32,7 +32,7 @@ def test_rich_is_truecolor_even_when_piped() -> None:
 
 def test_plain_has_no_ansi() -> None:
     res = run_cli("--plain", "version")
-    assert "\x1b" not in res.stdout and "0.1.0" in res.stdout
+    assert "\x1b" not in res.stdout and "0.1.1" in res.stdout
 
 
 def test_no_color_env_means_plain() -> None:
@@ -312,7 +312,9 @@ def test_export_html_cli(fake_astrolog: Path, tmp_path: Path) -> None:
 def test_transits_cli_and_view(fake_astrolog: Path) -> None:
     einstein = ["--date", "1879-03-14", "--time", "11:30", "--tz", "LMT", "--at", "48N24 10E00"]
     data = json.loads(run_cli("--json", "transits", *einstein, "--on", "2026-01-01", "--days", "10").stdout)
-    assert data["when"]["date"] == "2026-01-01" and isinstance(data["transits"], list) and "window" in data
+    assert (
+        data["when"]["date"] == "2026-01-01" and isinstance(data["transits"], list) and data["timeline"]["days"] == 10
+    )
     assert run_cli("--json", "transits", *einstein, "--on", "soon").returncode == 1
     assert run_cli("--json", "transits", *einstein, "--days", "999").returncode == 1
     shown = run_cli("--plain", "view", *einstein, "--transits", "2026-01-01")

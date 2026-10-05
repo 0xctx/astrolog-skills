@@ -29,6 +29,9 @@ opposition = 3
 [midpoints]
 aspects = []   # not a Hellenistic technique
 
+[harmonics]
+range = [1, 1]   # the birth chart only: harmonic charts aren't a Hellenistic technique (no [patterns] either)
+
 [sect]
 day_rule = "sun_above_horizon"              # Sun above the exact Ascendant-Descendant degrees
 diurnal = ["sun", "jupiter", "saturn"]

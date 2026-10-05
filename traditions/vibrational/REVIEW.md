@@ -27,4 +27,6 @@ Items to check against the sources before relying on them. Edit or delete lines 
 - **Conjunction orb 3°** for the new method; 4° (the square root of the 16° planet orb) picks up the weakest
   structures (`astro harmonics --orb-base 4`).
 - **Strongest harmonics** are ranked by midpoint strength above random charts (400, fixed seed) — the toolkit's
-  construction, so that harmonics with many possible structures don't win by numbers alone.
+  construction, so that harmonics with many possible structures don't win by numbers alone. **Planet groups** (3+
+  planets within the pattern orb in a harmonic chart) are scored the same way, each group weighted by its planet
+  pairs: the toolkit's construction for the high harmonics, where the new midpoint method has nothing left to count.

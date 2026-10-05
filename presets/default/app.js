@@ -27,7 +27,16 @@
   // the harmonics this page shows: one (a single chart) or a range/series stepped through with the slider
   const HARMONICS = (D.harmonics && D.harmonics.length) ? D.harmonics : [D.harmonic || 1];
   const state = { h: HARMONICS[0], shown: null, links: new Map(), tab: "sun", section: "aspects",
-                  mid: (pack.midpoints && pack.midpoints.method) || "old", rankBy: "new" };
+                  mid: (pack.midpoints && pack.midpoints.method) || "old", rankBy: "new", day: 0 };
+  // transits (astro export html --transits): daily positions of the transiting bodies and each harmonic's activation
+  const T = D.transits || null;
+  const R_TRANSIT = 306;
+  function skyAt(day) {
+    const out = {};
+    for (const [k, l] of Object.entries(T.bodies)) out[k] = l[Math.min(day, l.length - 1)];
+    return out;
+  }
+  function dayDate(day) { return new Date(Date.parse(T.start) + day * 86400000).toISOString().slice(0, 10); }
   let drawStrongest = () => {};  // the strongest-harmonics strip, when the page steps through several harmonics
   const S = D.study || null;  // doctrine and time lords, precomputed in Python (they don't change with the harmonic)
 
@@ -259,6 +268,21 @@
       g.addEventListener("focus", () => { focus.planet = p.key; applyFocus(); });
       g.addEventListener("blur", () => { if (!focus.sticky) { focus.planet = null; applyFocus(); } });
     }
+    // transiting bodies inside the natal ones, multiplied by the harmonic shown, in the label colour
+    if (T) {
+      const ring = el("g", { class: "transits" }, svg);
+      const sky = Object.entries(skyAt(state.day)).filter(([k]) => k !== "south_node");
+      const moving = spread(sky.map(([key, lon]) => ({ key, lon: C.harmonicLon(lon, state.h), show: C.harmonicLon(lon, state.h) })), 6);
+      for (const p of moving) {
+        const [ex, ey] = xy(p.lon, R_ASPECT), [lx, ly] = xy(p.show, R_TRANSIT - 13);
+        el("line", { x1: ex, y1: ey, x2: lx, y2: ly, stroke: rgb(ui.label), "stroke-opacity": ".45", "stroke-width": 1 }, ring);
+        const [cx, cy] = xy(p.show, R_TRANSIT);
+        el("circle", { cx, cy, r: 13, fill: rgb(ui.center_bg), stroke: rgb(ui.label), "stroke-opacity": ".75" }, ring);
+        const t = el("text", { x: cx, y: cy, "text-anchor": "middle", "dominant-baseline": "central", "font-size": 15, fill: rgb(ui.label), class: "glyph" }, ring);
+        t.textContent = GLYPH[p.key] || p.key;
+        const tt = el("title", {}, t); tt.textContent = `transiting ${NAME[p.key] || p.key} · ${fmt(p.lon)}`;
+      }
+    }
     // centre: the harmonic number, or a small star for the natal chart
     const centre = el("text", { x: CX, y: CY, "text-anchor": "middle", "dominant-baseline": "central", "font-size": state.h > 1 ? 56 : 20, fill: rgb(ui.title), "fill-opacity": state.h > 1 ? ".85" : ".45", "font-weight": 600, class: state.h > 1 ? "" : "glyph" }, svg);
     centre.textContent = state.h > 1 ? `H${state.h}` : "✦";
@@ -350,9 +374,26 @@
     const mids = mp.aspects.length ? C.midpointContacts(chart, pack, state.h, state.h === 1 ? "old" : state.mid)[b.key] || [] : [];
     if (rows.length && mids.length) rows.push(null);  // a quiet divider between planets and midpoints
     for (const c of mids) rows.push({ a: c, text: `${ABBR[c.a] || NAME[c.a]}/${ABBR[c.b] || NAME[c.b]}`, mid: true });
+    const moving = T ? C.transitContacts(chart, pack, state.h, skyAt(state.day)).filter(c => c.natal === b.key) : [];
+    if (moving.length) rows.push("transits");
+    for (const c of moving) rows.push({ a: c, text: `t ${NAME[c.transit] || c.transit}`, transit: true });
     if (!rows.length) h("div", "no contacts", "none", tree);
     for (const r of rows) {
       if (r === null) { h("div", "midpoints", "divider", tree); continue; }
+      if (r === "transits") { h("div", `transits ${dayDate(state.day)}`, "divider", tree); continue; }
+      if (r.transit) {
+        const row = h("div", null, "row tr", tree);
+        const sym = h("span", r.a.glyph, "sym", row);
+        sym.style.color = rgb(theme.aspects[r.a.family]);
+        sym.style.opacity = (0.45 + 0.55 * r.a.strength).toFixed(2);
+        h("span", r.text, "name", row);
+        h("span", orbDM(r.a.orb / k), "orb", row);
+        if (r.a.strength > 0.5) row.classList.add("tight");
+        const where = state.h > 1 ? ` in H${state.h}` : "";
+        row.addEventListener("mousemove", evt => showTip(evt, [`transiting ${NAME[r.a.transit] || r.a.transit} ${r.a.name} ${NAME[b.key]}${where}`, dayDate(state.day)]));
+        row.addEventListener("mouseleave", hideTip);
+        continue;
+      }
       const row = h("div", null, r.mid ? "row mid" : "row", tree);
       const sym = h("span", r.a.glyph, "sym", row);
       sym.style.color = rgb(theme.aspects[r.a.family]);
@@ -377,6 +418,7 @@
     renderPanel();
     drawStrongest();
     renderGrid();
+    if (T) drawTransitTimeline();
     animateTo(target(), ms);
   }
 
@@ -845,6 +887,162 @@
     sw.classList.add("mp-seg"); sw.title = "new: the natal angle to the midpoint × H · old: the midpoint inside the harmonic chart";
     document.getElementById("tabs").before(sw);
   }
+  // ── transit timeline: every transit to the natal planets, angles and midpoints, grouped by transiting planet ──
+  const tl = { off: new Set(), offH: new Set(), mids: true };
+  const ROWS_SHOWN = 150;
+  function dayOf(iso) { return Math.round((Date.parse(iso) - Date.parse(T.start)) / 86400000); }
+  function glyphs(key) { return key.split("/").map(k => GLYPH[k] || NAME[k] || k).join("/"); }
+  function goto(day, hh) {
+    state.day = Math.max(0, Math.min(T.days, day));
+    document.getElementById("tday").value = String(state.day);
+    if (HARMONICS.includes(hh) && hh !== state.h) {
+      state.h = hh;
+      const slider = document.getElementById("h");
+      if (slider) slider.value = String(HARMONICS.indexOf(hh));
+    }
+    onDay();
+  }
+  function chips(parent, label, items, isOff, flip) {
+    const g = h("div", null, "tl-chips", parent);
+    h("span", label, "lab", g);
+    for (const [key, text, title] of items) {
+      const b = h("button", text, isOff(key) ? "chip off" : "chip", g);
+      b.type = "button"; b.title = title;
+      b.addEventListener("click", () => { flip(key); b.classList.toggle("off"); drawTransitTimeline(); });
+    }
+  }
+  function aspectOf(key) {
+    return pack.transits.find(a => a.key === key) || pack.midpoints.aspects.find(a => a.key === key) || { key, glyph: key, family: "minor", name: key };
+  }
+  function pointName(key) { return key.split("/").map(k => NAME[k] || k).join("/"); }
+  function drawTransitTimeline() {
+    const svg = document.getElementById("ttl");
+    if (!svg) return;
+    svg.replaceChildren();
+    const ui = theme.ui, days = T.days;
+    const rows = T.passages.filter(p => !tl.off.has(p.transit) && !tl.offH.has(p.harmonic) && (tl.mids || !p.natal.includes("/")));
+    // one block per transiting planet (slowest first, as the passages come), a header row then its transits
+    const lines = [];
+    let mover = null;
+    for (const p of rows) {
+      if (lines.length >= ROWS_SHOWN) break;
+      if (p.transit !== mover) { mover = p.transit; lines.push({ head: mover }); }
+      lines.push({ p });
+    }
+    const left = 190, top = 20, rowH = 18, width = 1000, dayW = (width - left - 10) / (days + 1);
+    const height = top + lines.length * rowH + 8;
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    const defs = el("defs", {}, svg);
+    let month = dayDate(0).slice(0, 7);
+    for (let d = 1; d <= days; d++) {
+      const m = dayDate(d).slice(0, 7);
+      if (m !== month) {
+        const x = left + d * dayW;
+        const t = el("text", { x: x + 3, y: 12, class: "month" }, svg);
+        t.textContent = new Date(Date.parse(dayDate(d))).toLocaleString("en", { month: "short", timeZone: "UTC" });
+        el("line", { x1: x, y1: 4, x2: x, y2: height - 4, stroke: rgb(ui.dim), "stroke-opacity": ".14" }, svg);
+      }
+      month = m;
+    }
+    lines.forEach((line, i) => {
+      const y = top + i * rowH, mid = y + rowH / 2;
+      if (line.head) {
+        const t = el("text", { x: 6, y: mid + 5, class: "head" }, svg);
+        const g = el("tspan", { class: "g" }, t); g.textContent = (GLYPH[line.head] || "") + " ";
+        const n = el("tspan", {}, t); n.textContent = NAME[line.head] || line.head;
+        if (i > 0) el("line", { x1: 4, y1: y + 1, x2: width - 4, y2: y + 1, stroke: rgb(ui.dim), "stroke-opacity": ".18" }, svg);
+        return;
+      }
+      const p = line.p, asp = aspectOf(p.aspect), isMid = p.natal.includes("/");
+      const colour = rgb(theme.aspects[asp.family] || ui.label);
+      const g = el("g", { class: "tl-row" + (HARMONICS.length > 1 && p.harmonic === state.h ? " on" : "") }, svg);
+      const t = el("text", { x: 22, y: mid + 4 }, g);
+      const sym = el("tspan", { class: "g", fill: colour }, t); sym.textContent = asp.glyph + "  ";
+      const who = el("tspan", { class: isMid ? "mid" : "" }, t); who.textContent = pointName(p.natal);
+      // the bar brightens toward the tightest day: strength 1 at exact, fading to the edge of the orb
+      const x1 = left + dayOf(p.enters) * dayW, x2 = left + (dayOf(p.leaves) + 1) * dayW, xp = left + (dayOf(p.peak) + 0.5) * dayW;
+      const id = `tg${i}`, grad = el("linearGradient", { id, x1: x1, x2: x2, gradientUnits: "userSpaceOnUse" }, defs);
+      const at = x => Math.max(0, Math.min(1, (x - x1) / Math.max(x2 - x1, 1)));
+      const peaks = (p.exact.length ? p.exact.map(e => left + (dayOf(e) + 0.5) * dayW) : [xp]).map(at);
+      const stops = [[0, 0.12]];
+      peaks.forEach((pk, n) => {
+        if (n) stops.push([(peaks[n - 1] + pk) / 2, 0.35]);  // between retrograde passes it stays in orb, more loosely
+        stops.push([pk, 0.25 + 0.75 * p.strength]);
+      });
+      stops.push([1, 0.12]);
+      for (const [off, o] of stops) el("stop", { offset: off.toFixed(3), "stop-color": colour, "stop-opacity": (isMid ? 0.7 * o : o).toFixed(2) }, grad);
+      el("rect", { x: x1, y: mid - 4, width: Math.max(x2 - x1, 3), height: 8, rx: 4, fill: `url(#${id})` }, g);
+      for (const e of p.exact) {
+        const cx = left + (dayOf(e) + 0.5) * dayW;
+        el("circle", { cx, cy: mid, r: 4.5, fill: colour, stroke: rgb(ui.page), "stroke-width": 1.5 }, g);
+      }
+      el("rect", { x: 0, y, width, height: rowH, fill: "transparent" }, g);
+      const when = p.exact.length ? `exact ${p.exact.map(fmtDay).join(", ")}` : `closest ${fmtDay(p.peak)}, strength ${p.strength.toFixed(2)}`;
+      const tip = [`${NAME[p.transit] || p.transit} ${asp.name} ${pointName(p.natal)}`, `${when} · in orb ${fmtDay(p.enters)} – ${fmtDay(p.leaves)}`,
+                   p.harmonic > 1 ? `a ${ordinal(p.harmonic)}-harmonic aspect: click to see the H${p.harmonic} transit chart` : "click to go to this day"];
+      g.addEventListener("mousemove", evt => showTip(evt, tip));
+      g.addEventListener("mouseleave", hideTip);
+      g.addEventListener("click", () => goto(dayOf(p.peak), p.harmonic));
+    });
+    const x = left + (state.day + 0.5) * dayW;
+    el("line", { x1: x, y1: 4, x2: x, y2: height - 4, stroke: rgb(ui.title), "stroke-opacity": ".85", "stroke-width": 1.5 }, svg);
+    document.getElementById("tday-out").textContent = fmtDay(dayDate(state.day));
+    const shownRows = lines.filter(l => l.p).length;
+    document.getElementById("tl-more").textContent = rows.length > shownRows
+      ? `${shownRows} of ${rows.length} transits, the slowest planets first — switch planets off above to see the rest` : `${rows.length} transits`;
+  }
+  function fmtDay(iso) { return new Date(Date.parse(iso)).toLocaleString("en", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); }
+  function ordinal(n) { return n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th"); }
+  function onDay() {
+    document.getElementById("hval").textContent = `H${state.h}`;
+    animateTo(target(), 0);
+    renderPanel();
+    drawStrongest();
+    drawTransitTimeline();
+  }
+  if (T) {
+    const box = document.createElement("section");
+    box.className = "timeline transit-tl"; box.setAttribute("aria-label", "Transit timeline");
+    document.querySelector(".layout").after(box);
+    h("h2", "Transit timeline", null, box);
+    const many = HARMONICS.length > 1;
+    h("p", "Every transit to the natal planets, angles and midpoints, with the tradition's aspects and orbs. Each bar " +
+      "brightens toward its exact day (dots). Click a transit or a pattern to go to its day" + (many ? " and its harmonic transit chart" : "") +
+      "; the inner ring on the wheel shows the transiting planets." + (many ? "" : " (Export with --harmonics 1-32 to open each harmonic's transit chart.)"), "intro", box);
+    if (T.patterns.length) {
+      const list = h("div", null, "tl-patterns", box);
+      h("span", "Harmonic patterns", "lab", list);
+      for (const p of T.patterns.slice(0, 8)) {
+        const b = h("button", null, "chip pat", list);
+        b.type = "button";
+        h("b", `H${p.harmonic}`, null, b);
+        h("span", ` ${p.transits.map(k => GLYPH[k] || k).join("")} with ${p.natal.map(k => GLYPH[k] || k).join("")} `, "g", b);
+        h("span", `${fmtDay(p.starts).slice(0, -6)}${p.ends !== p.starts ? " – " + fmtDay(p.ends).slice(0, -6) : ""} · ${p.strength.toFixed(2)}`, "dates", b);
+        b.title = `Transiting ${p.transits.map(k => NAME[k] || k).join(", ")} with natal ${p.natal.map(k => NAME[k] || k).join(", ")}, ` +
+          `together in the ${ordinal(p.harmonic)} harmonic; tightest ${fmtDay(p.peak)} (strength ${p.strength.toFixed(2)}). Click to see it.`;
+        b.addEventListener("click", () => goto(dayOf(p.peak), p.harmonic));
+      }
+    }
+    const movers = [...new Set(T.passages.map(p => p.transit))];
+    chips(box, "Transiting", movers.map(k => [k, GLYPH[k] || k, NAME[k] || k]), k => tl.off.has(k), k => tl.off.has(k) ? tl.off.delete(k) : tl.off.add(k));
+    const hs = [...new Set(T.passages.map(p => p.harmonic))].sort((a, b) => a - b);
+    const glyphsOf = hh => [...new Set(T.passages.filter(p => p.harmonic === hh).map(p => aspectOf(p.aspect).glyph))].join(" ");
+    const namesOf = hh => [...new Set(T.passages.filter(p => p.harmonic === hh).map(p => aspectOf(p.aspect).name))].join(", ");
+    chips(box, "Aspects", hs.map(x => [x, glyphsOf(x), `${namesOf(x)} (the ${ordinal(x)} harmonic)`]), x => tl.offH.has(x), x => tl.offH.has(x) ? tl.offH.delete(x) : tl.offH.add(x));
+    chips(box, "Show", [["mids", "midpoints", "transits to natal midpoints"]], () => !tl.mids, () => { tl.mids = !tl.mids; });
+    const scroll = h("div", null, "tl-scroll", box);
+    const svg = document.createElementNS(NS, "svg");
+    svg.id = "ttl"; svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "Transits across the days");
+    scroll.appendChild(svg);
+    h("p", null, "tl-more", box).id = "tl-more";
+    const when = h("div", null, "when", box);
+    const lab = h("label", "Date", null, when); lab.htmlFor = "tday";
+    const input = h("input", null, null, when);
+    input.id = "tday"; input.type = "range"; input.min = "0"; input.max = String(T.days); input.value = "0";
+    const o = h("output", null, null, when); o.id = "tday-out";
+    input.addEventListener("input", () => { state.day = Number(input.value); onDay(); });
+    drawTransitTimeline();
+  }
   const R = D.strongest;
   if (R && HARMONICS.length > 1) {
     const box = document.createElement("section");
@@ -852,12 +1050,17 @@
     document.getElementById("hwrap").after(box);
     const head = h("div", null, "st-head", box);
     h("h2", "Strongest harmonics", null, head);
-    seg(head, null, [["new", "new method"], ["old", "old method"]], state.rankBy, v => { state.rankBy = v; drawStrongest(); });
+    state.rankBy = R.default_by || "new";
+    seg(head, null, [["new", "new method"], ["old", "old method"], ["groups", "planet groups"]], state.rankBy, v => { state.rankBy = v; drawStrongest(); });
     const bars = h("div", null, "bars", box);
     bars.setAttribute("role", "list");
     bars.style.gridTemplateColumns = `repeat(${R.harmonics.length}, 1fr)`;
+    // a long range (H1-360) is a dense histogram: no gaps, full width, a number every 10, 30 or 60
+    const many = R.harmonics.length, dense = many > 48, step = many <= 120 ? 10 : many <= 240 ? 30 : 60;
+    bars.classList.toggle("dense", dense); box.classList.toggle("dense", dense);
+    const ceiling = h("p", null, "st-note", box);
     const now = h("p", null, "st-now", box);
-    h("p", "Bar height: how much stronger your midpoint structures are than a typical chart's in that harmonic (σ). Click a bar to open it.", "st-note", box);
+    h("p", "Bar height: how much stronger this chart's midpoint structures (or planet groups) are than a typical chart's in that harmonic (σ). Click a bar to open it.", "st-note", box);
     const go = n => {
       const i = HARMONICS.indexOf(n);
       if (i < 0) return;
@@ -867,7 +1070,9 @@
     };
     const nm = k => NAME[k] || k;
     drawStrongest = () => {
-      const z = r => state.rankBy === "new" ? r.z_new : r.z_old;
+      const z = r => state.rankBy === "new" ? r.z_new : state.rankBy === "old" ? r.z_old : r.z_groups;
+      const groupText = g => `${g.bodies.map(nm).join("–")} ${g.strength.toFixed(2)}` +
+        (g.exact_time ? ` · needs the birth time within ~${g.moon_minutes} min` : "") + (g.generational ? " · mostly generational" : "");
       const top = [...R.harmonics].sort((a, b) => z(b) - z(a)).slice(0, 3).map(r => r.harmonic);
       const max = Math.max(1, ...R.harmonics.map(z));
       bars.replaceChildren();
@@ -876,25 +1081,41 @@
         b.type = "button"; b.setAttribute("role", "listitem");
         if (top.includes(r.harmonic)) b.classList.add("top");
         if (r.harmonic === state.h) b.classList.add("on");
+        if (!dense || r.harmonic === 1 || r.harmonic % step === 0) b.classList.add("lab");
         b.style.setProperty("--v", (Math.max(z(r), 0) / max).toFixed(3));
         b.setAttribute("aria-label", `H${r.harmonic}: ${z(r) >= 0 ? "+" : ""}${z(r).toFixed(1)} sigma`);
         h("i", null, null, b);
         h("span", String(r.harmonic), null, b);
         if (top.includes(r.harmonic)) h("em", `+${z(r).toFixed(1)}σ`, null, b);
-        const list = state.rankBy === "new" ? r.new_structures : r.old_structures;
-        b.addEventListener("mousemove", evt => showTip(evt, [`H${r.harmonic} · ${z(r) >= 0 ? "+" : ""}${z(r).toFixed(1)}σ above chance`,
-          ...list.map(s => `${nm(s.focus)} = ${nm(s.a)}/${nm(s.b)} ${s.strength.toFixed(2)}`)]));
+        const lines = state.rankBy === "groups" ? r.group_list.map(groupText)
+          : (state.rankBy === "new" ? r.new_structures : r.old_structures).map(s => `${nm(s.focus)} = ${nm(s.a)}/${nm(s.b)} ${s.strength.toFixed(2)}`);
+        b.addEventListener("mousemove", evt => showTip(evt, [`H${r.harmonic} · ${z(r) >= 0 ? "+" : ""}${z(r).toFixed(1)}σ above chance`, ...lines]));
         b.addEventListener("mouseleave", hideTip);
         b.addEventListener("click", () => go(r.harmonic));
       }
+      const reach = Math.floor(360 / pack.midpoints.new_orb), last = R.harmonics[R.harmonics.length - 1].harmonic;
+      ceiling.hidden = !(state.rankBy === "new" && last > reach);
+      ceiling.textContent = `New method: with a ${pack.midpoints.new_orb}° orb every structure finds its own harmonic by H${reach} ` +
+        `(360 ÷ ${pack.midpoints.new_orb}), so the harmonics above it hold none — switch to the old method to compare them.`;
       const r = R.harmonics.find(x => x.harmonic === state.h);
       now.replaceChildren();
       if (!r) return;
       h("b", `H${r.harmonic}`, null, now);
-      const s = state.rankBy === "new"
-        ? ` · ${z(r) >= 0 ? "+" : ""}${z(r).toFixed(1)}σ · midpoints ${r.new.toFixed(2)} (typical ${r.chance_new.toFixed(2)})`
-        : ` · ${z(r) >= 0 ? "+" : ""}${z(r).toFixed(1)}σ · midpoints ${r.old.toFixed(2)} (typical ${r.chance_old.toFixed(2)})`;
+      const sig = `${z(r) >= 0 ? "+" : ""}${z(r).toFixed(1)}σ`;
+      const s = state.rankBy === "new" ? ` · ${sig} · midpoints ${r.new.toFixed(2)} (typical ${r.chance_new.toFixed(2)})`
+        : state.rankBy === "old" ? ` · ${sig} · midpoints ${r.old.toFixed(2)} (typical ${r.chance_old.toFixed(2)})`
+        : ` · ${sig} · planet groups ${r.groups.toFixed(2)} (typical ${r.chance_groups.toFixed(2)})`;
       now.append(document.createTextNode(s));
+      if (state.rankBy === "groups") {
+        for (const g of r.group_list) {
+          now.append(document.createTextNode(" · "));
+          const chip = h("button", groupText(g), "chip", now);
+          chip.type = "button";
+          chip.addEventListener("mouseenter", () => { Object.assign(focus, { pair: null, group: g.bodies, mid: null }); applyFocus(); });
+          chip.addEventListener("mouseleave", () => { Object.assign(focus, { pair: null, group: null, mid: null }); applyFocus(); });
+        }
+        return;
+      }
       for (const st of (state.rankBy === "new" ? r.new_structures : r.old_structures)) {
         now.append(document.createTextNode(" · "));
         const chip = h("button", `${nm(st.focus)} = ${nm(st.a)}/${nm(st.b)} ${st.strength.toFixed(2)}`, "chip", now);

@@ -163,7 +163,32 @@
     return found;
   }
 
-  const api = { norm, sep, harmonicLon, bodies, aspects, patterns, score, midpoint, midpointContacts, vibration };
+  // the harmonic transit chart (analysis/transits.transit_aspects on both charts × H): every transiting body to every
+  // natal body and angle, with the pack's transit aspects and orbs in that chart's degrees; tightest (by orb ÷ limit) first
+  function transitContacts(chart, pack, h, sky) {
+    const natal = bodies(chart, h).filter(b => b.key !== "south_node").map(b => [b.key, b.lon]);  // bodies and angles
+    const found = [];
+    for (const [t, lon] of Object.entries(sky)) {
+      if (t === "south_node") continue;
+      const tlon = harmonicLon(lon, h);
+      for (const [n, nlon] of natal) {
+        const d = sep(tlon, nlon);
+        let best = null;
+        for (const a of pack.transits) {
+          const orb = Math.abs(d - a.angle);
+          if (orb <= a.orb && (best === null || orb / a.orb < best.orb / best.limit)) {
+            best = { transit: t, natal: n, aspect: a.key, glyph: a.glyph, family: a.family, name: a.name,
+                     orb, limit: a.orb, strength: 1 - orb / a.orb };
+          }
+        }
+        if (best) found.push(best);
+      }
+    }
+    return found.sort((p, q) => q.strength - p.strength);
+  }
+
+  const api = { norm, sep, harmonicLon, bodies, aspects, patterns, score, midpoint, midpointContacts, vibration,
+                transitContacts };
   root.AstroCore = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof globalThis !== "undefined" ? globalThis : this);

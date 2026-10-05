@@ -70,8 +70,9 @@ def test_user_journey(real: Path, tmp_path: Path) -> None:
     assert patterns["harmonics"][0]["patterns"][0]["bodies"] == ["mercury", "saturn", "pluto"]
 
     transits = astro("transits", "--chart", "Einstein", "--on", "1908-10-01", "--days", "60")
-    saturn_return = [w for w in transits["window"] if (w["transit"], w["natal"]) == ("saturn", "saturn")]
-    assert saturn_return and saturn_return[0]["exact"] == "1908-11-06"
+    rows = transits["timeline"]["passages"]
+    saturn_return = [p for p in rows if (p["transit"], p["natal"], p["aspect"]) == ("saturn", "saturn", "conjunction")]
+    assert saturn_return and "1908-11-06" in saturn_return[0]["exact"]
 
     report = astro("report-data", "--chart", "Einstein", "--pack", "vibrational", "--pack", "psychological")
     assert Path(report["packs"][0]["files"]["process.md"]).exists()

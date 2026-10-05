@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from astrolog_skills import config
+from astrolog_skills import config, packages
 from astrolog_skills.astrolog import locate
 from astrolog_skills.astrolog.run import expressions
 from astrolog_skills.errors import AstroError
@@ -103,30 +103,14 @@ def is_windows() -> bool:
 
 def compiler_hint(os_release: str | None = None) -> str:
     """The one command that installs a C/C++ compiler and make on this OS."""
-    if sys.platform == "darwin":
-        return "xcode-select --install"
-    text = os_release
-    if text is None:
-        try:
-            text = Path("/etc/os-release").read_text()
-        except OSError:
-            text = ""
-    ids = " ".join(
-        line.split("=", 1)[1].strip().strip('"').lower()
-        for line in text.splitlines()
-        if line.startswith(("ID=", "ID_LIKE="))
-    )
-    if any(k in ids for k in ("fedora", "rhel", "centos")):
-        return "sudo dnf install gcc-c++ make"
-    if any(k in ids for k in ("debian", "ubuntu")):
-        return "sudo apt install build-essential"
-    if "arch" in ids:
-        return "sudo pacman -S base-devel"
-    if any(k in ids for k in ("suse", "opensuse")):
-        return "sudo zypper install gcc-c++ make"
-    if "alpine" in ids:
-        return "sudo apk add build-base"
-    return "install a C/C++ compiler (gcc or clang) and make with your package manager"
+    return packages.hint(
+        {"dnf": "gcc-c++ make", "apt": "build-essential", "pacman": "base-devel", "zypper": "gcc-c++ make",
+         "apk": "build-base"},
+        mac="xcode-select --install",
+        windows="nothing to build: the official prebuilt astrolog.exe is unpacked instead",
+        otherwise="install a C/C++ compiler (gcc or clang) and make with your package manager",
+        os_release=os_release,
+    )  # fmt: skip
 
 
 def plan(version: str = DEFAULT_VERSION, prefix: Path | None = None, force: bool = False) -> InstallPlan:
